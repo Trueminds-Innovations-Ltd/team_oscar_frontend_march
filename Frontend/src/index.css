@@ -6,6 +6,29 @@ body {
   background-color: #f7f6ff;
 }
 
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #e8ecf8;
+  border-radius: 99px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #213b97;
+  border-radius: 99px;
+  border: 2px solid #e8ecf8;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #1a2f7a;
+}
+
+body::-webkit-scrollbar-thumb:active {
+  background: #152568;
+}
+
 aside h1 {
   font-family: "Nunito Sans";
 }
@@ -25,3 +48,7 @@ aside h1 {
 /* aside{
     font-family: "Quicksand", sans-serif;
 } */
+
+.bean {
+  font-family: "Nunito Sans";
+}
