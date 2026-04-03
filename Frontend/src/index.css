@@ -12,10 +12,14 @@ aside h1 {
 
 :root {
   --color-primary-color: hsl(227, 64%, 36%);
+  --color-bg-color-main: hsl(250, 100%, 99%);
+  --color-text-primary: hsl(210, 20%, 98%);
 }
 
 @theme {
   --color-primary-color: hsl(227, 64%, 36%);
+  --color-bg-color-main: hsl(250, 100%, 99%);
+  --color-text-primary: hsl(210, 20%, 98%) --;
 }
 
 /* aside{
