@@ -24,7 +24,10 @@ function OnboardingFlow() {
   useEffect(() => {
     if (!toast.show) return undefined;
 
-    const timer = setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 3000);
+    const timer = setTimeout(
+      () => setToast((prev) => ({ ...prev, show: false })),
+      3000,
+    );
     return () => clearTimeout(timer);
   }, [toast.show]);
 
@@ -44,7 +47,9 @@ function OnboardingFlow() {
             selectedInterests={selectedInterests}
             onToggleInterest={(interestId) =>
               setSelectedInterests((prev) =>
-                prev.includes(interestId) ? prev.filter((item) => item !== interestId) : [...prev, interestId],
+                prev.includes(interestId)
+                  ? prev.filter((item) => item !== interestId)
+                  : [...prev, interestId],
               )
             }
             onBack={() => setCurrentStep(1)}
@@ -65,10 +70,15 @@ function OnboardingFlow() {
             onToggleEnroll={(courseId) =>
               setEnrolledCourses((prev) => {
                 const exists = prev.includes(courseId);
-                const next = exists ? prev.filter((item) => item !== courseId) : [...prev, courseId];
+                const next = exists
+                  ? prev.filter((item) => item !== courseId)
+                  : [...prev, courseId];
 
                 if (!exists) {
-                  setToast({ show: true, message: "Enrolled! Course added to your dashboard." });
+                  setToast({
+                    show: true,
+                    message: "Enrolled! Course added to your dashboard.",
+                  });
                 }
 
                 return next;
@@ -81,7 +91,14 @@ function OnboardingFlow() {
         5: (
           <AiSupportStep
             onFinish={() => {
-              const colors = ["#2563EB", "#10B981", "#F59E0B", "#7C3AED", "#EC4899", "#60A5FA"];
+              const colors = [
+                "#2563EB",
+                "#10B981",
+                "#F59E0B",
+                "#7C3AED",
+                "#EC4899",
+                "#60A5FA",
+              ];
               const particles = Array.from({ length: 60 }).map((_, index) => ({
                 id: `confetti-${index}-${Date.now()}`,
                 left: Math.random() * 100,
@@ -93,7 +110,11 @@ function OnboardingFlow() {
 
               setConfetti(particles);
               setTimeout(() => setConfetti([]), 3200);
-              setToast({ show: true, message: "Welcome to TalentFlow! Redirecting to your dashboard…" });
+              setToast({
+                show: true,
+                message:
+                  "Welcome to TalentFlow! Redirecting to your dashboard…",
+              });
 
               setTimeout(() => navigate("/dashboard"), 1400);
             }}

@@ -18,7 +18,7 @@ function LoginForm() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    navigate("/dashboard");
+    navigate("/onboarding");
   };
 
   return (

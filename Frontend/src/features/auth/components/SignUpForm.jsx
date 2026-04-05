@@ -21,7 +21,7 @@ function SignUpForm() {
   const handleSignUp = (e) => {
     e.preventDefault();
 
-    navigate("/dashboard");
+    navigate("/onboarding");
   };
 
   return (
