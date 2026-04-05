@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { IonIcon } from "@ionic/react";
 import { eyeOffOutline } from "ionicons/icons";
@@ -7,22 +7,53 @@ import { mailOutline } from "ionicons/icons";
 import { lockClosedOutline } from "ionicons/icons";
 import Input from "./Input";
 import Button from "../../../shared/ui/Button";
+import LMSContext from "../../../contexts/LMSContext";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
+  const { login } = useContext(LMSContext);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    navigate("/onboarding");
+    try {
+      const result = await login(email, password);
+      const userData = result.user;
+      
+      // Check if user has completed onboarding:
+      // - interests must be a non-empty array
+      // - level must be a valid number (1, 2, or 3)
+      const hasValidInterests = Array.isArray(userData?.interests) && userData.interests.length > 0;
+      const hasValidLevel = typeof userData?.level === 'number' && [1, 2, 3].includes(userData.level);
+      
+      if (hasValidInterests && hasValidLevel) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <form className="mt-4" onSubmit={handleLogin}>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+      
       <div>
         <label className="text-gray-900 text-[14px] leading-5 font-medium pb-1.5">
           Email
@@ -32,7 +63,8 @@ function LoginForm() {
           <Input
             type="email"
             placeholder="Johndoe@gmail.com"
-            // onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -44,14 +76,12 @@ function LoginForm() {
         </label>
         <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
           <div className="flex items-center gap-2">
-            <IonIcon
-              icon={lockClosedOutline}
-              className="text-gray-500 text-xl"
-            />
+            <IonIcon icon={lockClosedOutline} className="text-gray-500 text-xl" />
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
-              // onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
@@ -82,8 +112,9 @@ function LoginForm() {
         bgColor="bg-primary-color"
         textColor="text-white"
         type="submit"
+        disabled={loading}
       >
-        Log In
+        {loading ? "Logging in..." : "Log In"}
       </Button>
     </form>
   );
