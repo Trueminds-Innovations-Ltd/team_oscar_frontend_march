@@ -1,5 +1,11 @@
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
+import SummaryCard from "../../../shared/ui/SummaryCard";
+import DashboardMetrics from "../../dashboard/components/DashboardMetrics";
+import WelcomeUser from "../../dashboard/components/WelcomeUser";
+import LearningModuleCard from "../../dashboard/components/LearningModuleCard";
+import UrgentTasks from "../../dashboard/components/UrgentTasks";
+import Statistics from "../../dashboard/components/Statistics";
 import { useEffect, useState, useContext } from "react";
 import LMSContext from "../../../contexts/LMSContext";
 
@@ -13,13 +19,6 @@ function StudentDashboard() {
       document.body.style.overflow = "";
     };
   }, [isSidebarOpen]);
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  };
 
   return (
     <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">
@@ -44,45 +43,63 @@ function StudentDashboard() {
         />
 
         <main className="mt-3 w-full px-4 py-6 sm:px-6 lg:px-7">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h1 className="bean text-2xl font-extrabold sm:text-3xl lg:text-[35px] break-words">
-                {getGreeting()}, {user?.name || "Student"} <span>👋</span>
-              </h1>
-              <p className="mt-2 text-sm font-medium text-gray-500 sm:text-base">
-                Student | Level: {user?.levelName || "Beginner"}
-              </p>
-            </div>
-            <button
-              onClick={logout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
+          <WelcomeUser />
 
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <p className="text-gray-500 text-sm">My Courses</p>
-              <p className="text-2xl font-bold mt-1">0</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <p className="text-gray-500 text-sm">Completed Lessons</p>
-              <p className="text-2xl font-bold mt-1">0</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <p className="text-gray-500 text-sm">In Progress</p>
-              <p className="text-2xl font-bold mt-1">0%</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <p className="text-gray-500 text-sm">Assignments</p>
-              <p className="text-2xl font-bold mt-1">0</p>
-            </div>
+          <section>
+            <DashboardMetrics>
+              <SummaryCard>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+
+                <div>
+                  <p className="font-medium">Progress</p>
+                  <p className="font-medium">10% Complete</p>
+                </div>
+              </SummaryCard>
+
+              <SummaryCard>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+
+                <div>
+                  <p className="font-medium">Courses</p>
+                  <p className="font-medium">5</p>
+                </div>
+              </SummaryCard>
+
+              <SummaryCard>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+
+                <div className="min-w-0">
+                  <p className="truncate font-medium">Completed Courses</p>
+                  <p className="font-medium">2/5</p>
+                </div>
+              </SummaryCard>
+
+              <SummaryCard>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+
+                <div>
+                  <p className="font-medium">Task</p>
+                  <p className="font-medium">2/5</p>
+                </div>
+              </SummaryCard>
+            </DashboardMetrics>
           </section>
 
-          <section className="bg-white p-6 rounded-xl shadow-sm">
-            <h2 className="text-xl font-bold mb-4">My Courses</h2>
-            <p className="text-gray-500">No courses enrolled yet. Complete onboarding to get started!</p>
+          <section className="mt-7 w-full">
+            <LearningModuleCard />
+          </section>
+
+          <section className="mt-6 grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
+            <UrgentTasks />
+            <Statistics />
           </section>
         </main>
       </section>
