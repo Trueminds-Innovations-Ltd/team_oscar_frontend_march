@@ -8,7 +8,7 @@ import { FaGraduationCap } from "react-icons/fa";
 import { TbNotes } from "react-icons/tb";
 import { GoTasklist } from "react-icons/go";
 import WelcomeUser from "../components/WelcomeUser";
-import LearningModuleCard from "../../../shared/layout/LearningModuleCard";
+import LearningModuleCard from "../components/LearningModuleCard";
 import UrgentTasks from "../components/UrgentTasks";
 import Statistics from "../components/Statistics";
 

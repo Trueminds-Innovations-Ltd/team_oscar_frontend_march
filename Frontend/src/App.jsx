@@ -3,6 +3,7 @@ import { LMSProvider } from "./contexts/LMSContext";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import Login from "./features/auth/pages/Login";
 import SignUp from "./features/auth/pages/SignUp";
+import Onboarding from "./features/onboarding/pages/Onboarding";
 
 function App() {
   return (
@@ -13,16 +14,12 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/onboarding" element={<Onboarding />} />
           </Routes>
         </BrowserRouter>
       </LMSProvider>
     </div>
 
-    // <div>
-    //   {/* <Dashboard /> */}
-    //   {/* <Login /> */}
-    //   {/* <SignUp /> */}
-    // </div>
   );
 }
 
