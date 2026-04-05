@@ -24,14 +24,7 @@ function LoginForm() {
     setError("");
     setLoading(true);
 
-    try {
-      await login(email, password);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    navigate("/onboarding");
   };
 
   return (

@@ -30,29 +30,7 @@ function SignUpForm() {
     setError("");
     setSuccess("");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match!");
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters!");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      await signup(name, email, password, role);
-      setSuccess("Account created! Please check your email to confirm your account.");
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    } catch (err) {
-      setError(err.message || "Signup failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    navigate("/onboarding");
   };
 
   return (
