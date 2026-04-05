@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AiSupportStep from "./AiSupportStep";
 import BackgroundDecor from "./BackgroundDecor";
@@ -9,17 +9,35 @@ import OnboardingTopbar from "./OnboardingTopbar";
 import StepProgress from "./StepProgress";
 import ToastMessage from "./ToastMessage";
 import WelcomeStep from "./WelcomeStep";
+import LMSContext from "../../../contexts/LMSContext";
 
 const totalSteps = 5;
 
+// Map frontend interest IDs to backend values
+const interestMap = {
+  "ui-ux": "UI/UX",
+  "frontend": "Frontend",
+  "data": "Data Analysis",
+  "product": "Product Management"
+};
+
+// Map frontend level to backend values
+const levelMap = {
+  "beginner": 1,
+  "intermediate": 2,
+  "advanced": 3
+};
+
 function OnboardingFlow() {
   const navigate = useNavigate();
+  const { completeOnboarding, user } = useContext(LMSContext);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState("");
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "" });
   const [confetti, setConfetti] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!toast.show) return undefined;
@@ -30,6 +48,51 @@ function OnboardingFlow() {
     );
     return () => clearTimeout(timer);
   }, [toast.show]);
+
+  const handleFinish = async () => {
+    setLoading(true);
+    
+    try {
+      // Convert frontend values to backend values
+      const backendInterests = selectedInterests.map(id => interestMap[id] || id);
+      const backendLevel = levelMap[selectedLevel] || 1;
+
+      await completeOnboarding(backendInterests, backendLevel);
+
+      const colors = [
+        "#2563EB",
+        "#10B981",
+        "#F59E0B",
+        "#7C3AED",
+        "#EC4899",
+        "#60A5FA",
+      ];
+      const particles = Array.from({ length: 60 }).map((_, index) => ({
+        id: `confetti-${index}-${Date.now()}`,
+        left: Math.random() * 100,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        duration: 1.2 + Math.random() * 1.8,
+        delay: Math.random() * 0.8,
+        radius: Math.random() > 0.5 ? "50%" : "2px",
+      }));
+
+      setConfetti(particles);
+      setTimeout(() => setConfetti([]), 3200);
+      setToast({
+        show: true,
+        message: "Welcome to TalentFlow! Redirecting to your dashboard…",
+      });
+
+      setTimeout(() => navigate("/dashboard"), 1400);
+    } catch (error) {
+      setToast({
+        show: true,
+        message: error.message || "Something went wrong. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const activeStep = useMemo(
     () =>
@@ -90,38 +153,12 @@ function OnboardingFlow() {
         ),
         5: (
           <AiSupportStep
-            onFinish={() => {
-              const colors = [
-                "#2563EB",
-                "#10B981",
-                "#F59E0B",
-                "#7C3AED",
-                "#EC4899",
-                "#60A5FA",
-              ];
-              const particles = Array.from({ length: 60 }).map((_, index) => ({
-                id: `confetti-${index}-${Date.now()}`,
-                left: Math.random() * 100,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                duration: 1.2 + Math.random() * 1.8,
-                delay: Math.random() * 0.8,
-                radius: Math.random() > 0.5 ? "50%" : "2px",
-              }));
-
-              setConfetti(particles);
-              setTimeout(() => setConfetti([]), 3200);
-              setToast({
-                show: true,
-                message:
-                  "Welcome to TalentFlow! Redirecting to your dashboard…",
-              });
-
-              setTimeout(() => navigate("/dashboard"), 1400);
-            }}
+            onFinish={handleFinish}
+            loading={loading}
           />
         ),
       })[currentStep],
-    [currentStep, enrolledCourses, navigate, selectedInterests, selectedLevel],
+    [currentStep, enrolledCourses, selectedInterests, selectedLevel, loading],
   );
 
   return (
@@ -129,7 +166,7 @@ function OnboardingFlow() {
       <BackgroundDecor />
 
       <div className="app">
-        <OnboardingTopbar onSkip={() => setCurrentStep(5)} />
+        <OnboardingTopbar onSkip={() => handleFinish()} />
         <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
 
         <div className="card">

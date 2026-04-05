@@ -1,15 +1,6 @@
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
-import SummaryCard from "../../../shared/ui/SummaryCard";
-import DashboardMetrics from "../../dashboard/components/DashboardMetrics";
 import { useEffect, useState, useContext } from "react";
-import { HiOutlineBookOpen } from "react-icons/hi2";
-import { FaGraduationCap } from "react-icons/fa";
-import { TbNotes } from "react-icons/tb";
-import { GoTasklist } from "react-icons/go";
-import LearningModuleCard from "../../../shared/layout/LearningModuleCard";
-import UrgentTasks from "../../dashboard/components/UrgentTasks";
-import Statistics from "../../dashboard/components/Statistics";
 import LMSContext from "../../../contexts/LMSContext";
 
 function StudentDashboard() {
@@ -70,50 +61,28 @@ function StudentDashboard() {
             </button>
           </div>
 
-          <section>
-            <DashboardMetrics>
-              <SummaryCard>
-                <FaGraduationCap size={20} />
-                <div>
-                  <p className="font-medium">Progress</p>
-                  <p className="font-medium">10% Complete</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <HiOutlineBookOpen size={20} />
-                <div>
-                  <p className="font-medium">My Courses</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <TbNotes size={20} />
-                <div className="min-w-0">
-                  <p className="truncate font-medium">Completed Lessons</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <GoTasklist size={20} />
-                <div>
-                  <p className="font-medium">Assignments</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-            </DashboardMetrics>
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">My Courses</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">Completed Lessons</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">In Progress</p>
+              <p className="text-2xl font-bold mt-1">0%</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">Assignments</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
           </section>
 
-          <section className="mt-7 w-full">
+          <section className="bg-white p-6 rounded-xl shadow-sm">
             <h2 className="text-xl font-bold mb-4">My Courses</h2>
-            <LearningModuleCard />
-          </section>
-
-          <section className="mt-6 grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
-            <UrgentTasks />
-            <Statistics />
+            <p className="text-gray-500">No courses enrolled yet. Complete onboarding to get started!</p>
           </section>
         </main>
       </section>

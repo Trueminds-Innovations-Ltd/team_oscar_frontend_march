@@ -23,19 +23,45 @@ function SignUpForm() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { signup } = useContext(LMSContext);
+  const { signup, login } = useContext(LMSContext);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    navigate("/onboarding");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters!");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await signup(name, email, password, role);
+      
+      // Auto login after signup
+      await login(email, password);
+      
+      setSuccess("Account created! Redirecting to setup...");
+      setTimeout(() => {
+        navigate("/onboarding");
+      }, 1500);
+    } catch (err) {
+      setError(err.message || "Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="mt-4" onSubmit={handleSignUp}>
-      <form>
+    <div className="mt-4">
+      <form onSubmit={handleSignUp}>
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}

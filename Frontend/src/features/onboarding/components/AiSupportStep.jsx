@@ -2,7 +2,7 @@ import { FaCheck, FaRegCommentDots, FaRobot, FaUserGraduate } from "react-icons/
 import { HiArrowLongRight } from "react-icons/hi2";
 import StepHeader from "./StepHeader";
 
-function AiSupportStep({ onFinish }) {
+function AiSupportStep({ onFinish, loading }) {
   return (
     <>
       <div className="ai-center">
@@ -77,9 +77,15 @@ function AiSupportStep({ onFinish }) {
 
       <div className="cta-section">
         <div className="cta-row" style={{ justifyContent: "center", flexDirection: "column", alignItems: "center", gap: "10px" }}>
-          <button type="button" className="btn-primary" style={{ minWidth: "220px", justifyContent: "center" }} onClick={onFinish}>
-            Go to dashboard
-            <HiArrowLongRight />
+          <button 
+            type="button" 
+            className="btn-primary" 
+            style={{ minWidth: "220px", justifyContent: "center" }} 
+            onClick={onFinish}
+            disabled={loading}
+          >
+            {loading ? "Setting up..." : "Go to dashboard"}
+            {!loading && <HiArrowLongRight />}
           </button>
 
           <div className="cta-hint">All features available from day one · Settings are always editable</div>

@@ -1,15 +1,6 @@
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
-import SummaryCard from "../../../shared/ui/SummaryCard";
-import DashboardMetrics from "../../dashboard/components/DashboardMetrics";
 import { useEffect, useState, useContext } from "react";
-import { HiOutlineBookOpen } from "react-icons/hi2";
-import { FaUsers } from "react-icons/fa";
-import { TbNotes } from "react-icons/tb";
-import { FaChalkboardTeacher } from "react-icons/fa";
-import LearningModuleCard from "../../../shared/layout/LearningModuleCard";
-import UrgentTasks from "../../dashboard/components/UrgentTasks";
-import Statistics from "../../dashboard/components/Statistics";
 import LMSContext from "../../../contexts/LMSContext";
 
 function TutorDashboard() {
@@ -70,55 +61,33 @@ function TutorDashboard() {
             </button>
           </div>
 
-          <section>
-            <DashboardMetrics>
-              <SummaryCard>
-                <FaChalkboardTeacher size={20} />
-                <div>
-                  <p className="font-medium">My Courses</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <FaUsers size={20} />
-                <div>
-                  <p className="font-medium">Total Students</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <TbNotes size={20} />
-                <div className="min-w-0">
-                  <p className="truncate font-medium">Pending Assignments</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <HiOutlineBookOpen size={20} />
-                <div>
-                  <p className="font-medium">Notifications</p>
-                  <p className="font-medium">0</p>
-                </div>
-              </SummaryCard>
-            </DashboardMetrics>
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">My Courses</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">Total Students</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">Pending Assignments</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <p className="text-gray-500 text-sm">Notifications</p>
+              <p className="text-2xl font-bold mt-1">0</p>
+            </div>
           </section>
 
-          <section className="mt-7 w-full">
+          <section className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">My Courses</h2>
               <button className="px-4 py-2 bg-primary-color text-white rounded-lg hover:bg-blue-600">
                 + Create Course
               </button>
             </div>
-            <LearningModuleCard />
-          </section>
-
-          <section className="mt-6 grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
-            <UrgentTasks />
-            <Statistics />
+            <p className="text-gray-500">No courses created yet. Start by creating your first course!</p>
           </section>
         </main>
       </section>

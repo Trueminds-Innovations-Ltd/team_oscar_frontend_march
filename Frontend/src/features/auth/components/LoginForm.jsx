@@ -24,7 +24,26 @@ function LoginForm() {
     setError("");
     setLoading(true);
 
-    navigate("/onboarding");
+    try {
+      const result = await login(email, password);
+      const userData = result.user;
+      
+      // Check if user has completed onboarding:
+      // - interests must be a non-empty array
+      // - level must be a valid number (1, 2, or 3)
+      const hasValidInterests = Array.isArray(userData?.interests) && userData.interests.length > 0;
+      const hasValidLevel = typeof userData?.level === 'number' && [1, 2, 3].includes(userData.level);
+      
+      if (hasValidInterests && hasValidLevel) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

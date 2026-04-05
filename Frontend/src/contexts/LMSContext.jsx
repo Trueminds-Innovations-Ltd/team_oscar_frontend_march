@@ -37,11 +37,21 @@ function LMSProvider({ children }) {
     setToken(newToken);
     setUser(userData);
     
-    return response;
+    return { ...response, user: userData };
   };
 
   const signup = async (name, email, password, role) => {
     const response = await api.post('/auth/signup', { name, email, password, role });
+    return response;
+  };
+
+  const completeOnboarding = async (interests, level) => {
+    const response = await api.post('/onboarding', { interests, level }, token);
+    // Update user with new data
+    if (response.data?.user) {
+      setUser(response.data.user);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
     return response;
   };
 
@@ -53,7 +63,7 @@ function LMSProvider({ children }) {
   };
 
   return (
-    <LMSContext.Provider value={{ user, token, loading, login, signup, logout, fetchUser }}>
+    <LMSContext.Provider value={{ user, token, loading, login, signup, logout, fetchUser, completeOnboarding }}>
       {children}
     </LMSContext.Provider>
   );
