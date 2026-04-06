@@ -13,7 +13,11 @@ function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
 
   if (!user) {
@@ -27,7 +31,11 @@ function DashboardRouter() {
   const { user, loading } = useContext(LMSContext);
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -46,6 +54,9 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/tutorDashboard" element={<TutorDashboard />} />
+          <Route path="/studentDashboard" element={<StudentDashboard />} /> */}
           <Route
             path="/dashboard"
             element={
