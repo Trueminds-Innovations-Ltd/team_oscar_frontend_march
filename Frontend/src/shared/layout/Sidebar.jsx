@@ -8,7 +8,7 @@ import { CgProfile } from "react-icons/cg";
 import { SlSettings } from "react-icons/sl";
 
 function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
-  const navItemClass = "text-[14px] text-slate-200 hover:font-semibold";
+  const navItemClass = "text-[12px] text-slate-200 hover:font-semibold";
 
   return (
     <aside

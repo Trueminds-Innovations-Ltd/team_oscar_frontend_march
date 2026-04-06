@@ -8,6 +8,7 @@ import Onboarding from "./features/onboarding/pages/Onboarding";
 import StudentDashboard from "./features/student/pages/StudentDashboard";
 import TutorDashboard from "./features/tutor/pages/TutorDashboard";
 import FloatingAIChat from "./shared/components/FloatingAIChat";
+import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -68,6 +69,10 @@ function App() {
         </Routes>
       </BrowserRouter>
     </LMSProvider>
+
+    // <div>
+    //   <ActiveCourses />
+    // </div>
   );
 }
 
