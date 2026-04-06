@@ -4,21 +4,26 @@ import ChatWindow from "./ChatWindow";
 function FloatingAIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: window.innerHeight - 100 });
+  const [position, setPosition] = useState({ x: 20, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [hasNewMessage, setHasNewMessage] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [longPressTimer, setLongPressTimer] = useState(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const updatePosition = () => {
+      const isMobileView = window.innerWidth < 768;
+      if (isMobileView) {
+        setPosition({ x: 20, y: window.innerHeight - 90 });
+      } else {
+        setPosition({ x: 20, y: window.innerHeight - 90 });
+      }
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    return () => window.removeEventListener("resize", updatePosition);
   }, []);
 
   useEffect(() => {
@@ -62,16 +67,13 @@ function FloatingAIChat() {
   }, [position]);
 
   const handleMouseDown = (e) => {
-    if (e.detail === 2 && !isMobile) {
-      return;
-    }
     handleDragStart(e);
   };
 
   const handleTouchStart = (e) => {
     const timer = setTimeout(() => {
       handleDragStart(e);
-    }, 500);
+    }, 300);
     setLongPressTimer(timer);
   };
 
@@ -83,10 +85,12 @@ function FloatingAIChat() {
   };
 
   const toggleChat = () => {
-    setIsOpen(!isOpen);
-    setIsMinimized(false);
-    if (!isOpen) {
-      setHasNewMessage(false);
+    if (!isDragging) {
+      setIsOpen(!isOpen);
+      setIsMinimized(false);
+      if (!isOpen) {
+        setHasNewMessage(false);
+      }
     }
   };
 
@@ -131,7 +135,7 @@ function FloatingAIChat() {
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        onClick={() => !isDragging && toggleChat()}
+        onClick={toggleChat}
       >
         <div className="relative">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(227,64%,36%)] to-[hsl(250,100%,70%)] shadow-lg flex items-center justify-center">
