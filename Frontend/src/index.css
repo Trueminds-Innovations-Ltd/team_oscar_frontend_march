@@ -46,9 +46,6 @@ body::-webkit-scrollbar-thumb:active {
     font-family: "Quicksand", sans-serif;
 } */
 
-.bean {
-  font-family: "Nunito Sans";
-}
 
 @keyframes slideUp {
   from {

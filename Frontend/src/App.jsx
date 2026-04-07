@@ -10,6 +10,8 @@ import TutorDashboard from "./features/tutor/components/TutorDashboard";
 import FloatingAIChat from "./shared/components/FloatingAIChat";
 import Courses from "./features/courses/pages/Courses";
 import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
+import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
+import EditProfilePage from "./features/profile/components/EditProfilePage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -80,6 +82,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <ActiveCourses />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfileOverviewPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/edit-profile"
+            element={
+              <ProtectedRoute>
+                <EditProfilePage />
               </ProtectedRoute>
             }
           />

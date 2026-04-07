@@ -16,14 +16,6 @@ function ActiveCourses() {
   const [sessionData, setSessionData] = useState(null);
 
   useEffect(() => {
-    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isSidebarOpen]);
-
-  useEffect(() => {
     const sessionParam = searchParams.get('session');
     if (sessionParam) {
       try {
@@ -51,7 +43,7 @@ function ActiveCourses() {
         />
       )}
 
-      <section className="flex min-h-screen w-full flex-col lg:ml-62.5">
+      <section className="flex min-h-screen w-full flex-col lg:ml-[250px]">
         <NavBar
           onOpenSidebar={() => setIsSidebarOpen(true)}
           isSidebarOpen={isSidebarOpen}

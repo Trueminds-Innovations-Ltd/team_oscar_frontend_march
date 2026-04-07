@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useContext } from "react";
+import React, { useState, useContext } from 'react';
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
 import Greeting from './Greeting';
@@ -38,31 +37,30 @@ const TutorDashboard = () => {
           isSidebarOpen={isSidebarOpen} 
         />
 
-        <div className={styles['tf-content']}>
-          <div className="flex justify-between items-center mb-6">
-            <Greeting name={user?.name || "Tutor"} taskCount={8} />
-            <button
-              onClick={() => setShowCreateSession(true)}
-              className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 font-medium text-sm"
-            >
-              + Create Study Session
-            </button>
-          </div>
+        <main className={styles['tf-content']}>
+          <Greeting user={user} onCreateSession={() => setShowCreateSession(true)} />
           
           <SummaryCards />
-          <CourseCard />
-
-          <div className={styles['tf-bottom-grid']}>
-            <PendingReviews />
-            <TutorInsights />
+          
+          <div className={styles['tf-grid']}>
+            <div className={styles['tf-main-column']}>
+              <CourseCard />
+              <TutorInsights />
+            </div>
+            
+            <div className={styles['tf-side-column']}>
+              <PendingReviews />
+            </div>
           </div>
-        </div>
+        </main>
       </div>
 
-      <CreateStudySession 
-        isOpen={showCreateSession} 
-        onClose={() => setShowCreateSession(false)} 
-      />
+      {showCreateSession && (
+        <CreateStudySession 
+          isOpen={showCreateSession} 
+          onClose={() => setShowCreateSession(false)} 
+        />
+      )}
     </div>
   );
 };

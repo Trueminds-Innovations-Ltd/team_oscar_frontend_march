@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import CoursesContent from "../components/CoursesContent";
 import LMSContext from "../../../contexts/LMSContext";
 import { CourseProvider } from "../../../contexts/CourseContext";
+import NavBar from "../../../shared/layout/NavBar";
 
 function CoursesContentWrapper() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,7 +34,12 @@ function CoursesContentWrapper() {
         />
       )}
 
-      <section className="w-full min-h-screen lg:ml-62.5">
+      <section className="flex w-full flex-col min-h-screen lg:ml-[250px]">
+        <NavBar
+          onOpenSidebar={() => setIsSidebarOpen(true)}
+          isSidebarOpen={isSidebarOpen}
+        />
+
         <CoursesContent
           onOpenSidebar={() => setIsSidebarOpen(true)}
           isSidebarOpen={isSidebarOpen}

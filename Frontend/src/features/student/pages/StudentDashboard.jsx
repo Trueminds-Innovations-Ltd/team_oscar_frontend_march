@@ -1,3 +1,4 @@
+import { useState, useEffect, useContext } from "react";
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
 import SummaryCard from "../../../shared/ui/SummaryCard";
@@ -6,7 +7,6 @@ import WelcomeUser from "../../dashboard/components/WelcomeUser";
 import LearningModuleCard from "../../dashboard/components/LearningModuleCard";
 import UrgentCourses from "../../dashboard/components/UrgentCourses";
 import Statistics from "../../dashboard/components/Statistics";
-import { useEffect, useState, useContext } from "react";
 import LMSContext from "../../../contexts/LMSContext";
 import { CourseProvider, useCourses } from "../../../contexts/CourseContext";
 import CourseReadingModal from "../../../shared/components/CourseReadingModal";

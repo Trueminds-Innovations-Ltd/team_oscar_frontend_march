@@ -1,8 +1,8 @@
+import { useState, useEffect } from "react";
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
 import SummaryCard from "../../../shared/ui/SummaryCard";
 import DashboardMetrics from "../components/DashboardMetrics";
-import { useEffect, useState } from "react";
 import { HiOutlineBookOpen } from "react-icons/hi2";
 import { FaGraduationCap } from "react-icons/fa";
 import { TbNotes } from "react-icons/tb";
