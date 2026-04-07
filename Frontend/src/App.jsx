@@ -8,9 +8,11 @@ import Onboarding from "./features/onboarding/pages/Onboarding";
 import StudentDashboard from "./features/student/pages/StudentDashboard";
 import TutorDashboard from "./features/tutor/pages/TutorDashboard";
 import FloatingAIChat from "./shared/components/FloatingAIChat";
-// import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
-// import Dashboard from "./features/dashboard/pages/Dashboard";
-// import Courses from "./features/courses/pages/Courses";
+import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
+import Dashboard from "./features/dashboard/pages/Dashboard";
+import Courses from "./features/courses/pages/Courses";
+import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
+import EditProfilePage from "./features/profile/components/EditProfilePage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -57,11 +59,13 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tutorDashboard" element={<TutorDashboard />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/active-courses" element={<ActiveCourses />} />
-          <Route path="/studentDashboard" element={<StudentDashboard />} /> */}
+          <Route path="/studentDashboard" element={<StudentDashboard />} />
+          <Route path="/profile" element={<ProfileOverviewPage />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
 
           <Route
             path="/dashboard"

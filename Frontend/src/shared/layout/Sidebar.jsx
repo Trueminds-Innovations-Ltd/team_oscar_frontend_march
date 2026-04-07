@@ -7,48 +7,68 @@ import { BsBell } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { SlSettings } from "react-icons/sl";
 import { useNavigate, useLocation } from "react-router-dom";
+import Image from "../ui/Image";
 
 function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isActive = (path) => location.pathname === path;
+
   const navItemClass = (path) =>
-    `text-[12px] ${
-      location.pathname === path ? "font-bold text-white" : "text-slate-200"
-    } hover:font-semibold`;
+    `flex items-center gap-3 px-3 py-2 text-[14px] font-bold rounded-lg cursor-pointer transition ${
+      isActive(path)
+        ? "bg-[#2f4bb2] text-white font-semibold"
+        : "text-[#213b97] hover:bg-white/10"
+    }`;
+
+  const iconClass = (path) =>
+    `text-[20px] ${isActive(path) ? "text-white" : "text-[#213b97]"}`;
+
+  // const handleNav = (path) => {
+  //   navigate(path);
+  //   onClose();
+  //   // bg-[#213b97]
+  // };
 
   return (
     <aside
       id="dashboard-sidebar"
-      className={`fixed inset-y-0 left-0 z-40 h-dvh w-[250px] bg-[#213b97] px-5 pb-4 pt-8 text-[#c4cce7] transition-transform duration-300 ease-in-out lg:fixed lg:top-0 lg:z-auto lg:translate-x-0  ${
+      className={`fixed inset-y-0 left-0 z-40 h-dvh w-[250px] bg-white px-5 pb-4 pt-8 overflow-y-auto text-[#c4cce7] transition-transform duration-300 ease-in-out lg:fixed lg:top-0 lg:z-auto lg:translate-x-0  ${
         isMobileOpen ? "translate-x-0" : "-translate-x-full "
       }`}
     >
       <div className="flex items-center justify-between gap-5">
-        <h1 className="text-center text-[30px] font-bold leading-none text-white">
-          Talent Flow
-        </h1>
+        <div>
+          <Image
+            className="flex items-center justify-center"
+            src="./images/logo.png"
+            alt="logo"
+          />
+        </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="top-4 rounded-md p-1 text-white hover:bg-white/10 lg:hidden"
+          className="top-4 rounded-md p-1 text-primary-color hover:bg-white/10 lg:hidden"
           aria-label="Close sidebar"
         >
           ✕
         </button>
       </div>
 
-      <section className="mt-24">
-        <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
+      <section className="mt-18">
+        <p className="mb-4 text-[12px] font-bold uppercase tracking-[1.6px] text-[#213b97]">
           Learning
         </p>
 
-        <section className="mb-3 flex items-center gap-3 ">
-          <RiHome6Line className="text-[15px] text-slate-200" />
+        <section
+          className={`mb-3 flex items-center gap-3 ${navItemClass("/dashboard")}`}
+        >
+          <RiHome6Line className={iconClass("/dashboard")} />
           <a
             href="/dashboard"
-            className={navItemClass("/dashboard")}
+            // className={navItemClass("/dashboard")}
             onClick={(e) => {
               e.preventDefault();
               navigate("/dashboard");
@@ -58,11 +78,13 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
           </a>
         </section>
 
-        <section className="mb-3 flex items-center gap-3">
-          <HiOutlineBookOpen className="text-[15px] text-slate-200" />
+        <section
+          className={`mb-3 flex items-center gap-3 ${navItemClass("/courses")}`}
+        >
+          <HiOutlineBookOpen className={iconClass("/courses")} />
           <a
             href="/courses"
-            className={navItemClass("/courses")}
+            // className={navItemClass("/courses")}
             onClick={(e) => {
               e.preventDefault();
               navigate("/courses");
@@ -72,11 +94,13 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
           </a>
         </section>
 
-        <section className="flex items-center gap-3">
-          <GoPencil className="text-[15px] text-slate-200" />
+        <section
+          className={`mb-3 flex items-center gap-3 ${navItemClass("/assignments")}`}
+        >
+          <GoPencil className={iconClass("/assigments")} />
           <a
             href="#"
-            className={navItemClass("/assignments")}
+            // className={navItemClass("/assignments")}
             onClick={onClose}
           >
             Assignment
@@ -84,39 +108,45 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
         </section>
 
         <section className="mt-11">
-          <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
+          <p className="mb-4 text-[12px] font-bold uppercase tracking-[1.6px] text-[#213b97]">
             Community
           </p>
 
-          <section className="mb-3 flex items-center gap-3">
-            <MdPeopleOutline className="text-[15px] text-slate-200" />
+          <section
+            className={`mb-3 flex items-center gap-3 ${navItemClass("/collaboration")}`}
+          >
+            <MdPeopleOutline className={iconClass("/collaboration")} />
             <a
               href="#"
-              className={navItemClass("/collaboration")}
+              // className={navItemClass("/collaboration")}
               onClick={onClose}
             >
               Collaboration
             </a>
           </section>
 
-          <section className="flex items-center gap-3">
-            <BiMessageSquareDetail className="text-[15px] text-slate-200" />
-            <a href="#" className={navItemClass("/messages")} onClick={onClose}>
+          <section
+            className={`mb-3 flex items-center gap-3 ${navItemClass("/messages")}`}
+          >
+            <BiMessageSquareDetail className={iconClass("/messages")} />
+            <a href="#" onClick={onClose}>
               Messages
             </a>
           </section>
         </section>
 
         <section className="mt-11">
-          <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
+          <p className="mb-4 text-[12px] font-bold uppercase tracking-[1.6px] text-[#213b97]">
             YOU
           </p>
 
-          <section className="flex items-center gap-3">
-            <BsBell className="text-[15px] text-slate-200" />
+          <section
+            className={`mb-3 flex items-center gap-3 ${navItemClass("/notifications")}`}
+          >
+            <BsBell className={iconClass("/notifications")} />
             <a
               href="#"
-              className={navItemClass("/notifications")}
+              // className={navItemClass("/notifications")}
               onClick={onClose}
             >
               Notifications
@@ -125,16 +155,26 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
         </section>
 
         <section className="mt-15 space-y-3">
-          <section className="flex items-center gap-3">
-            <CgProfile className="text-[15px] text-slate-200" />
-            <a href="#" className={navItemClass("/profile")} onClick={onClose}>
+          <section
+            className={`mb-3 flex items-center gap-3 ${navItemClass("/profile")}`}
+          >
+            <CgProfile className={iconClass("/profile")} />
+            <a
+              href="/profile"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/profile");
+              }}
+            >
               Profile
             </a>
           </section>
 
-          <section className="flex items-center gap-3">
-            <SlSettings className="text-[15px] text-slate-200" />
-            <a href="#" className={navItemClass("/settings")} onClick={onClose}>
+          <section
+            className={`mb-3 flex items-center gap-3 ${navItemClass("/settings")}`}
+          >
+            <SlSettings className={iconClass("/settings")} />
+            <a href="#" onClick={onClose}>
               Settings
             </a>
           </section>

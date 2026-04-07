@@ -1,6 +1,7 @@
 import Sidebar from "../../../shared/layout/Sidebar";
 import { useEffect, useState } from "react";
 import CoursesContent from "../components/CoursesContent";
+import NavBar from "../../../shared/layout/NavBar";
 
 function Courses() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,6 +31,11 @@ function Courses() {
       )}
 
       <section className="w-full min-h-screen lg:ml-62.5">
+        <NavBar
+          onOpenSidebar={() => setIsSidebarOpen(true)}
+          isSidebarOpen={isSidebarOpen}
+        />
+
         <CoursesContent
           onOpenSidebar={() => setIsSidebarOpen(true)}
           isSidebarOpen={isSidebarOpen}

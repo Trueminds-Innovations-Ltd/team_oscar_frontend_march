@@ -73,21 +73,10 @@ const allCourses = [
   },
 ];
 
-function CoursesContent({ onOpenSidebar, isSidebarOpen }) {
+function CoursesContent() {
   return (
     <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-265">
-        <button
-          type="button"
-          onClick={onOpenSidebar}
-          className="mb-4 inline-flex items-center rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-700 hover:bg-gray-100 lg:hidden"
-          aria-label="Open sidebar"
-          aria-expanded={isSidebarOpen}
-          aria-controls="dashboard-sidebar"
-        >
-          <FiMenu size={18} />
-        </button>
-
         <header className="mb-3">
           <h1 className="text-[34px] font-extrabold tracking-[-0.5px] text-[#181f33]">
             Enrolled Courses
