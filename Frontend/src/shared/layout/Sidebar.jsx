@@ -34,7 +34,7 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
   return (
     <aside
       id="dashboard-sidebar"
-      className={`fixed inset-y-0 left-0 z-40 h-dvh w-[250px] bg-white px-5 pb-4 pt-8 text-[#c4cce7] transition-transform duration-300  ease-in-out lg:fixed lg:top-0 lg:z-auto lg:translate-x-0  ${
+      className={`sidebar fixed inset-y-0 left-0 z-40 h-dvh w-[250px] bg-white px-5 pb-4 pt-8 text-[#c4cce7] overflow-y-auto transition-transform duration-300  ease-in-out lg:fixed lg:top-0 lg:z-auto lg:translate-x-0  ${
         isMobileOpen ? "translate-x-0" : "-translate-x-full "
       }`}
     >
