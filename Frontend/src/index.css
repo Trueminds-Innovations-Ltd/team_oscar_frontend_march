@@ -29,9 +29,6 @@ body::-webkit-scrollbar-thumb:active {
   background: #152568;
 }
 
-aside h1 {
-  font-family: "Nunito Sans";
-}
 
 :root {
   --color-primary-color: hsl(227, 64%, 36%);

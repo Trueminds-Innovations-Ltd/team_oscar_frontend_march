@@ -10,11 +10,12 @@ import { useEffect, useState, useContext } from "react";
 import LMSContext from "../../../contexts/LMSContext";
 import { CourseProvider, useCourses } from "../../../contexts/CourseContext";
 import CourseReadingModal from "../../../shared/components/CourseReadingModal";
+import StudySessionModal from "../../../shared/components/StudySessionModal";
 
 function StudentDashboardContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useContext(LMSContext);
-  const { readingModal, updateProgress, closeReadingModal } = useCourses();
+  const { readingModal, updateProgress, closeReadingModal, studySessionModal, closeStudySessionModal } = useCourses();
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
@@ -103,6 +104,13 @@ function StudentDashboardContent() {
           course={readingModal.course}
           onClose={closeReadingModal}
           onProgressUpdate={updateProgress}
+        />
+      )}
+
+      {studySessionModal.isOpen && studySessionModal.session && (
+        <StudySessionModal
+          session={studySessionModal.session}
+          onClose={closeStudySessionModal}
         />
       )}
     </>

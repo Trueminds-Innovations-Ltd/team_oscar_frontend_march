@@ -10,14 +10,13 @@ export function CourseProvider({ children }) {
   const [inProgressCourses, setInProgressCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [studySessions, setStudySessions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [studySessionProgress, setStudySessionProgress] = useState({});
   const [error, setError] = useState(null);
   const [readingModal, setReadingModal] = useState({ isOpen: false, course: null });
+  const [studySessionModal, setStudySessionModal] = useState({ isOpen: false, session: null });
 
   const loadCourses = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
       const token = localStorage.getItem('token');
       const response = await api.get('/courses/my-courses', token);
       
@@ -32,21 +31,39 @@ export function CourseProvider({ children }) {
         setActiveCourse(active);
       }
     } catch (err) {
-      console.error('Failed to load courses:', err);
-      setError(err.message);
+      console.error('Failed to load courses:', err.message);
       loadMockData();
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   const loadStudySessions = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found, skipping study sessions load');
+        return;
+      }
+      console.log('Loading study sessions with token:', token);
+      
       const response = await api.get('/study-sessions/student', token);
-      setStudySessions(response.data.sessions || []);
+      console.log('Study sessions response:', response);
+      console.log('Study sessions data:', response.data);
+      
+      if (response.data && response.data.sessions) {
+        setStudySessions(response.data.sessions);
+      }
+      
+      try {
+        const progressResponse = await api.get('/study-sessions/my-progress', token);
+        console.log('Progress response:', progressResponse);
+        if (progressResponse.data?.progressMap) {
+          setStudySessionProgress(progressResponse.data.progressMap);
+        }
+      } catch (progressErr) {
+        console.error('Failed to load progress (non-critical):', progressErr.message);
+      }
     } catch (err) {
-      console.error('Failed to load study sessions:', err);
+      console.error('Failed to load study sessions (non-critical):', err.message);
     }
   }, []);
 
@@ -103,9 +120,34 @@ export function CourseProvider({ children }) {
     setActiveCourse(mockCourses[0]);
   };
 
+  const openStudySessionModal = (session) => {
+    setStudySessionModal({ isOpen: true, session });
+  };
+
+  const closeStudySessionModal = () => {
+    setStudySessionModal({ isOpen: false, session: null });
+    loadStudySessions();
+  };
+
+  const getIncompleteStudySessions = useCallback(() => {
+    const incomplete = [];
+    studySessions.forEach(session => {
+      const progress = studySessionProgress[session._id];
+      if (progress && progress.progress > 0 && progress.progress < 100) {
+        incomplete.push({ session, progress: progress.progress, lastPosition: progress.lastPosition || 0 });
+      }
+    });
+    return incomplete.sort((a, b) => b.lastPosition - a.lastPosition);
+  }, [studySessions, studySessionProgress]);
+
+  const getLatestIncomplete = useCallback(() => {
+    const incomplete = getIncompleteStudySessions();
+    return incomplete[0]?.session || null;
+  }, [getIncompleteStudySessions]);
+
   const getIncompleteCount = useCallback(() => {
-    return inProgressCourses.length;
-  }, [inProgressCourses]);
+    return getIncompleteStudySessions().length;
+  }, [getIncompleteStudySessions]);
 
   const canStartCourse = useCallback((courseId) => {
     const course = enrolledCourses.find(c => c._id === courseId);
@@ -215,17 +257,22 @@ export function CourseProvider({ children }) {
     inProgressCourses,
     enrolledCourses,
     studySessions,
-    loading,
+    studySessionProgress,
     error,
     readingModal,
+    studySessionModal,
     openReadingModal,
     closeReadingModal,
+    openStudySessionModal,
+    closeStudySessionModal,
     startCourse,
     updateProgress,
     loadCourses,
     loadStudySessions,
     canStartCourse,
     getIncompleteCount,
+    getIncompleteStudySessions,
+    getLatestIncomplete,
     maxIncomplete: MAX_INCOMPLETE_COURSES
   };
 

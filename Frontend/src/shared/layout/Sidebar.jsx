@@ -6,9 +6,16 @@ import { BiMessageSquareDetail } from "react-icons/bi";
 import { BsBell } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { SlSettings } from "react-icons/sl";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
-  const navItemClass = "text-[14px] text-slate-200 hover:font-semibold";
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItemClass = (path) =>
+    `text-[12px] ${
+      location.pathname === path ? "font-bold text-white" : "text-slate-200"
+    } hover:font-semibold`;
 
   return (
     <aside
@@ -37,74 +44,100 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
           Learning
         </p>
 
-        <section className="mb-3 flex items-center gap-3">
-          <RiHome6Line className="text-[15px] text-[#e6ecff]" />
-          <a href="#" className={navItemClass} onClick={onClose}>
+        <section className="mb-3 flex items-center gap-3 ">
+          <RiHome6Line className="text-[15px] text-slate-200" />
+          <a
+            href="/dashboard"
+            className={navItemClass("/dashboard")}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/dashboard");
+            }}
+          >
             Dashboard
           </a>
         </section>
 
         <section className="mb-3 flex items-center gap-3">
           <HiOutlineBookOpen className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
+          <a
+            href="/courses"
+            className={navItemClass("/courses")}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/courses");
+            }}
+          >
             Courses
           </a>
         </section>
 
         <section className="flex items-center gap-3">
           <GoPencil className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
+          <a
+            href="#"
+            className={navItemClass("/assignments")}
+            onClick={onClose}
+          >
             Assignment
           </a>
         </section>
-      </section>
 
-      <section className="mt-11">
-        <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
-          Community
-        </p>
+        <section className="mt-11">
+          <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
+            Community
+          </p>
 
-        <section className="mb-3 flex items-center gap-3">
-          <MdPeopleOutline className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
-            Collaboration
-          </a>
+          <section className="mb-3 flex items-center gap-3">
+            <MdPeopleOutline className="text-[15px] text-slate-200" />
+            <a
+              href="#"
+              className={navItemClass("/collaboration")}
+              onClick={onClose}
+            >
+              Collaboration
+            </a>
+          </section>
+
+          <section className="flex items-center gap-3">
+            <BiMessageSquareDetail className="text-[15px] text-slate-200" />
+            <a href="#" className={navItemClass("/messages")} onClick={onClose}>
+              Messages
+            </a>
+          </section>
         </section>
 
-        <section className="flex items-center gap-3">
-          <BiMessageSquareDetail className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
-            Messages
-          </a>
-        </section>
-      </section>
+        <section className="mt-11">
+          <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
+            YOU
+          </p>
 
-      <section className="mt-11">
-        <p className="mb-4 text-[11px] uppercase tracking-[1.6px] text-[#a9b4da]">
-          YOU
-        </p>
-
-        <section className="flex items-center gap-3">
-          <BsBell className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
-            Notifications
-          </a>
-        </section>
-      </section>
-
-      <section className="mt-15 space-y-3">
-        <section className="flex items-center gap-3">
-          <CgProfile className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
-            Profile
-          </a>
+          <section className="flex items-center gap-3">
+            <BsBell className="text-[15px] text-slate-200" />
+            <a
+              href="#"
+              className={navItemClass("/notifications")}
+              onClick={onClose}
+            >
+              Notifications
+            </a>
+          </section>
         </section>
 
-        <section className="flex items-center gap-3">
-          <SlSettings className="text-[15px] text-slate-200" />
-          <a href="#" className={navItemClass} onClick={onClose}>
-            Settings
-          </a>
+        <section className="mt-15 space-y-3">
+          <section className="flex items-center gap-3">
+            <CgProfile className="text-[15px] text-slate-200" />
+            <a href="#" className={navItemClass("/profile")} onClick={onClose}>
+              Profile
+            </a>
+          </section>
+
+          <section className="flex items-center gap-3">
+            <SlSettings className="text-[15px] text-slate-200" />
+            <a href="#" className={navItemClass("/settings")} onClick={onClose}>
+              Settings
+            </a>
+          </section>
         </section>
       </section>
     </aside>

@@ -27,13 +27,16 @@ function LoginForm() {
     try {
       const result = await login(email, password);
       const userData = result.user;
-      
+
       // Check if user has completed onboarding:
       // - interests must be a non-empty array
       // - level must be a valid number (1, 2, or 3)
-      const hasValidInterests = Array.isArray(userData?.interests) && userData.interests.length > 0;
-      const hasValidLevel = typeof userData?.level === 'number' && [1, 2, 3].includes(userData.level);
-      
+      const hasValidInterests =
+        Array.isArray(userData?.interests) && userData.interests.length > 0;
+      const hasValidLevel =
+        typeof userData?.level === "number" &&
+        [1, 2, 3].includes(userData.level);
+
       if (hasValidInterests && hasValidLevel) {
         navigate("/dashboard");
       } else {
@@ -53,7 +56,7 @@ function LoginForm() {
           {error}
         </div>
       )}
-      
+
       <div>
         <label className="text-gray-900 text-[14px] leading-5 font-medium pb-1.5">
           Email
@@ -76,7 +79,10 @@ function LoginForm() {
         </label>
         <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
           <div className="flex items-center gap-2">
-            <IonIcon icon={lockClosedOutline} className="text-gray-500 text-xl" />
+            <IonIcon
+              icon={lockClosedOutline}
+              className="text-gray-500 text-xl"
+            />
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"

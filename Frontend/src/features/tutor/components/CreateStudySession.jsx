@@ -14,7 +14,8 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
     subTopic: '',
     fileUrl: '',
     linkUrl: '',
-    startDate: ''
+    startDate: '',
+    uploading: false
   });
   
   const [error, setError] = useState('');
@@ -59,7 +60,7 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
     setError('');
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -67,7 +68,33 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
         setError('Please upload a PDF or DOCX file');
         return;
       }
-      setFormData(prev => ({ ...prev, fileUrl: file.name }));
+      
+      setFormData(prev => ({ ...prev, fileUrl: file.name, uploading: true }));
+      
+      try {
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+        
+        const response = await fetch('http://localhost:3000/api/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formDataUpload
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          setFormData(prev => ({ ...prev, fileUrl: result.fileUrl, uploading: false }));
+        } else {
+          setError('Failed to upload file');
+          setFormData(prev => ({ ...prev, fileUrl: '', uploading: false }));
+        }
+      } catch (err) {
+        setError('Failed to upload file');
+        setFormData(prev => ({ ...prev, fileUrl: '', uploading: false }));
+      }
     }
   };
 
@@ -102,7 +129,8 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
         subTopic: '',
         fileUrl: '',
         linkUrl: '',
-        startDate: ''
+        startDate: '',
+        uploading: false
       });
       
       if (onSuccess) onSuccess();
@@ -183,16 +211,19 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
-              Upload File (PDF or DOCX)
+              Upload File (PDF or DOCX, max 50MB)
             </label>
             <input
               type="file"
               accept=".pdf,.doc,.docx"
-              onChange={handleFileUpload}
+              onChange={handleFileChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none"
             />
-            {formData.fileUrl && (
-              <p className="mt-1 text-sm text-green-600">✓ {formData.fileUrl}</p>
+            {formData.uploading && (
+              <p className="mt-1 text-sm text-blue-600">Uploading...</p>
+            )}
+            {formData.fileUrl && !formData.uploading && (
+              <p className="mt-1 text-sm text-green-600">✓ File uploaded</p>
             )}
           </div>
 

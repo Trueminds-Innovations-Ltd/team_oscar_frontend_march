@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useContext } from "react";
 import Sidebar from "../../../shared/layout/Sidebar";
-import TopBar from './TopBar';
+import NavBar from "../../../shared/layout/NavBar";
 import Greeting from './Greeting';
 import SummaryCards from './SummaryCards';
 import CourseCard from './CourseCard';
@@ -33,7 +33,7 @@ const TutorDashboard = () => {
       )}
 
       <div className={styles['tf-main']}>
-        <TopBar 
+        <NavBar 
           onOpenSidebar={() => setIsSidebarOpen(true)} 
           isSidebarOpen={isSidebarOpen} 
         />
