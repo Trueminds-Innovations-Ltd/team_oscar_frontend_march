@@ -1,18 +1,10 @@
 import Sidebar from "../../../shared/layout/Sidebar";
-import { useEffect, useState } from "react";
+import useSidebarOpen  from "../../../shared/hooks/useSidebarOpen";
 import CoursesContent from "../components/CoursesContent";
 import NavBar from "../../../shared/layout/NavBar";
 
 function Courses() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isSidebarOpen]);
+  const [isSidebarOpen, setIsSidebarOpen] = useSidebarOpen();
 
   return (
     <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">

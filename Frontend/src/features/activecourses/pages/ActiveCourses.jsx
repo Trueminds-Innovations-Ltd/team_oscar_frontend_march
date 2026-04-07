@@ -7,19 +7,13 @@ import LessonOverviewPanel from "../components/LessonOverviewPanel";
 import LessonSidebarPanel from "../components/LessonSidebarPanel";
 import MaterialsDownloadsPanel from "../components/MaterialsDownloadsPanel";
 import { useNavigate } from "react-router-dom";
+import useSidebarOpen from "../../../shared/hooks/useSidebarOpen";
 
 function ActiveCourses() {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useSidebarOpen();
   const [activeTab, setActiveTab] = useState("lesson");
 
-  useEffect(() => {
-    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isSidebarOpen]);
 
   return (
     <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">

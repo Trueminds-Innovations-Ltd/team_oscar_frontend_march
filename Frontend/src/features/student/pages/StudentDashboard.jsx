@@ -8,17 +8,11 @@ import UrgentTasks from "../../dashboard/components/UrgentTasks";
 import Statistics from "../../dashboard/components/Statistics";
 import { useEffect, useState, useContext } from "react";
 import LMSContext from "../../../contexts/LMSContext";
+import useSidebarOpen from "../../../shared/hooks/useSidebarOpen";
 
 function StudentDashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useSidebarOpen();
   const { user, logout } = useContext(LMSContext);
-
-  useEffect(() => {
-    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isSidebarOpen]);
 
   return (
     <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">

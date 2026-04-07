@@ -56,7 +56,7 @@ function App() {
     <LMSProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
+          {/* <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -74,14 +74,11 @@ function App() {
                 <DashboardRouter />
               </ProtectedRoute>
             }
-          />
+          /> */}
+          <Route path="/" element={<StudentDashboard />} />
         </Routes>
       </BrowserRouter>
     </LMSProvider>
-
-    // <div>
-    //   <ActiveCourses />
-    // </div>
   );
 }
 

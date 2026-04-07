@@ -1,6 +1,6 @@
 import { RiHome6Line } from "react-icons/ri";
-import { HiOutlineBookOpen } from "react-icons/hi";
-import { GoPencil } from "react-icons/go";
+import { PiBookThin } from "react-icons/pi";
+import { TbNotes } from "react-icons/tb";
 import { MdPeopleOutline } from "react-icons/md";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { BsBell } from "react-icons/bs";
@@ -16,7 +16,7 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
   const isActive = (path) => location.pathname === path;
 
   const navItemClass = (path) =>
-    `flex items-center gap-3 px-3 py-2 text-[14px] font-bold rounded-lg cursor-pointer transition ${
+    `flex items-center gap-3 px-3 py-2 text-[14px] font-normal rounded-lg cursor-pointer transition ${
       isActive(path)
         ? "bg-[#2f4bb2] text-white font-semibold"
         : "text-[#213b97] hover:bg-white/10"
@@ -34,7 +34,7 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
   return (
     <aside
       id="dashboard-sidebar"
-      className={`fixed inset-y-0 left-0 z-40 h-dvh w-[250px] bg-white px-5 pb-4 pt-8 overflow-y-auto text-[#c4cce7] transition-transform duration-300 ease-in-out lg:fixed lg:top-0 lg:z-auto lg:translate-x-0  ${
+      className={`fixed inset-y-0 left-0 z-40 h-dvh w-[250px] bg-white px-5 pb-4 pt-8 text-[#c4cce7] transition-transform duration-300  ease-in-out lg:fixed lg:top-0 lg:z-auto lg:translate-x-0  ${
         isMobileOpen ? "translate-x-0" : "-translate-x-full "
       }`}
     >
@@ -81,7 +81,7 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
         <section
           className={`mb-3 flex items-center gap-3 ${navItemClass("/courses")}`}
         >
-          <HiOutlineBookOpen className={iconClass("/courses")} />
+          <PiBookThin className={iconClass("/courses")} />
           <a
             href="/courses"
             // className={navItemClass("/courses")}
@@ -97,13 +97,13 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
         <section
           className={`mb-3 flex items-center gap-3 ${navItemClass("/assignments")}`}
         >
-          <GoPencil className={iconClass("/assigments")} />
+          <TbNotes className={iconClass("/assignments")} />
           <a
             href="#"
             // className={navItemClass("/assignments")}
             onClick={onClose}
           >
-            Assignment
+            Assignments
           </a>
         </section>
 

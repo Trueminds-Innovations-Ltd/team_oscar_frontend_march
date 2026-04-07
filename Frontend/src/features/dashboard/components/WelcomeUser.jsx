@@ -19,7 +19,7 @@ function WelcomeUser() {
   return (
     <section className="min-w-0 flex justify-between items-start">
       <div>
-        <h1 className="bean text-2xl font-extrabold sm:text-3xl lg:text-[35px] break-words">
+        <h1 className="text-[19px] sm:text-[19px] font-semibold lg:text-[19px] break-words text-blue-800">
           {getGreeting()}, {user?.name || "User"} <span>👋</span>
         </h1>
         <p className="mt-2 text-sm font-medium text-gray-500 sm:text-base">

@@ -2,7 +2,6 @@ import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
 import SummaryCard from "../../../shared/ui/SummaryCard";
 import DashboardMetrics from "../components/DashboardMetrics";
-import { useEffect, useState } from "react";
 import { HiOutlineBookOpen } from "react-icons/hi2";
 import { FaGraduationCap } from "react-icons/fa";
 import { TbNotes } from "react-icons/tb";
@@ -11,17 +10,10 @@ import WelcomeUser from "../components/WelcomeUser";
 import LearningModuleCard from "../components/LearningModuleCard";
 import UrgentTasks from "../components/UrgentTasks";
 import Statistics from "../components/Statistics";
+import useSidebarOpen from "../../../shared/hooks/useSidebarOpen";
 
 function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isSidebarOpen]);
+  const [isSidebarOpen, setIsSidebarOpen] = useSidebarOpen();
 
   return (
     <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">
