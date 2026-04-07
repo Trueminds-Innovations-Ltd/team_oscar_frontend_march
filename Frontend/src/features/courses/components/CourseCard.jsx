@@ -1,4 +1,5 @@
 import { FiChevronRight } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 function CourseCard({
   title,
@@ -8,6 +9,7 @@ function CourseCard({
   actionLabel,
   disabled = false,
 }) {
+  const navigate = useNavigate();
   return (
     <article className="rounded-[10px] border border-[#d4d8e3] bg-white p-2.5 shadow-[0_2px_0_rgba(0,0,0,0.02)]">
       <div className="h-23 w-full rounded-[9px] bg-[#111825]" />
@@ -36,11 +38,15 @@ function CourseCard({
           <button
             type="button"
             disabled={disabled}
-            className={`inline-flex items-center rounded-full px-4 py-1.5 text-[9px] font-semibold transition-colors ${
+            className={`inline-flex items-center rounded-full px-4 py-1.5 text-[9px] font-semibold transition-colors cursor-pointer ${
               disabled
                 ? "cursor-not-allowed bg-[#d5d9e2] text-[#f5f7fb]"
                 : "bg-[#2542a1] text-white hover:bg-[#1e3580]"
             }`}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/active-courses");
+            }}
           >
             {actionLabel}
             {!disabled && <FiChevronRight className="ml-1" />}

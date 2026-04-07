@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styles from "../dashboard.module.css";
-import TopBar from "../components/TopBar";
 import Greeting from "../components/Greeting";
 import SummaryCards from "../components/SummaryCards";
 import CourseCard from "../components/CourseCard";
 import PendingReviews from "../components/PendingReviews";
 import TutorInsights from "../components/TutorInsights";
 import Sidebar from "../../../shared/layout/Sidebar";
+import NavBar from "../../../shared/layout/NavBar";
 
 const TutorDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,7 +37,7 @@ const TutorDashboard = () => {
 
       <section className="flex w-full flex-col min-h-screen lg:ml-[250px]">
         <div className={styles["tf-main"]}>
-          <TopBar
+          <NavBar
             onOpenSidebar={() => setIsSidebarOpen(true)}
             isSidebarOpen={isSidebarOpen}
           />

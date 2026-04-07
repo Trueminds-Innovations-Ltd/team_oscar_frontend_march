@@ -6,8 +6,10 @@ import ActiveCourseTabs from "../components/ActiveCourseTabs";
 import LessonOverviewPanel from "../components/LessonOverviewPanel";
 import LessonSidebarPanel from "../components/LessonSidebarPanel";
 import MaterialsDownloadsPanel from "../components/MaterialsDownloadsPanel";
+import { useNavigate } from "react-router-dom";
 
 function ActiveCourses() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
 
@@ -45,7 +47,11 @@ function ActiveCourses() {
           <div className="mx-auto w-full max-w-7xl">
             <button
               type="button"
-              className="mb-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[#4f586e] hover:text-[#2e3650]"
+              className="mb-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[#4f586e] hover:text-[#2e3650] cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/courses");
+              }}
             >
               <FiChevronLeft className="text-[14px]" />
               Back To Courses

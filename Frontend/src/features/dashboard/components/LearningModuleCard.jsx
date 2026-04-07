@@ -1,6 +1,8 @@
-import { BsFillPlayFill } from 'react-icons/bs'
+import { BsFillPlayFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 function LearningModuleCard() {
+  const navigate = useNavigate();
   return (
     <section className="w-full rounded-lg border border-gray-300 p-4 flex flex-col gap-4 lg:flex-row">
       <section className="h-[180px] w-full rounded-lg bg-black sm:h-[220px] lg:h-[200px] lg:max-w-[500px]">
@@ -12,7 +14,9 @@ function LearningModuleCard() {
           Design: module 3 of 8
         </p>
 
-        <p className="font-medium break-words">UX Fundamentals & Design Thinking</p>
+        <p className="font-medium break-words">
+          UX Fundamentals & Design Thinking
+        </p>
 
         <p className="text-sm font-medium break-words">
           Next up: Wireframing with Low-fidelity Prototypes
@@ -29,7 +33,13 @@ function LearningModuleCard() {
             <p className="text-xs truncate">Last visited 2h ago</p>
           </div>
 
-          <button className="w-full sm:w-auto px-5 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition duration-300 text-sm">
+          <button
+            className="w-full sm:w-auto px-5 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition duration-300 text-sm cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/active-courses");
+            }}
+          >
             Resume Course
             <BsFillPlayFill className="inline-block ml-2" />
           </button>

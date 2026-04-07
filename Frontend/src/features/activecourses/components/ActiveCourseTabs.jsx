@@ -5,7 +5,7 @@ function ActiveCourseTabs({ activeTab, onTabChange }) {
         <button
           type="button"
           onClick={() => onTabChange("lesson")}
-          className={`border-b-[3px] px-1 pb-2 text-[14px] font-semibold capitalize transition-colors ${
+          className={`border-b-[3px] px-1 pb-2 text-[14px] font-semibold capitalize transition-colors cursor-pointer ${
             activeTab === "lesson"
               ? "border-[#f6aa1c] text-[#1b2236]"
               : "border-transparent text-[#525c71] hover:text-[#1b2236]"
@@ -17,7 +17,7 @@ function ActiveCourseTabs({ activeTab, onTabChange }) {
         <button
           type="button"
           onClick={() => onTabChange("materials")}
-          className={`border-b-[3px] px-1 pb-2 text-[14px] font-semibold capitalize transition-colors ${
+          className={`border-b-[3px] px-1 pb-2 text-[14px] font-semibold capitalize transition-colors cursor-pointer ${
             activeTab === "materials"
               ? "border-[#f6aa1c] text-[#1b2236]"
               : "border-transparent text-[#525c71] hover:text-[#1b2236]"

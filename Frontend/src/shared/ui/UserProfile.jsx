@@ -8,7 +8,11 @@ function UserProfile() {
           <MdNotificationsActive size={18} className="text-gray-600" />
         </div>
 
-        <img src="avatar.png" alt="avatar" className="h-9 w-9 rounded-full object-cover" />
+        <img
+          src="avatar.png"
+          alt="avatar"
+          className="h-9 w-9 rounded-full object-cover"
+        />
 
         <div className="hidden sm:block min-w-0">
           <p className="truncate text-sm font-medium">Oscar Bob</p>
