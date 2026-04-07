@@ -6,7 +6,7 @@ import Login from "./features/auth/pages/Login";
 import SignUp from "./features/auth/pages/SignUp";
 import Onboarding from "./features/onboarding/pages/Onboarding";
 import StudentDashboard from "./features/student/pages/StudentDashboard";
-import TutorDashboard from "./features/tutor/pages/TutorDashboard";
+import TutorDashboard from "./features/tutor/components/TutorDashboard";
 import FloatingAIChat from "./shared/components/FloatingAIChat";
 
 function ProtectedRoute({ children }) {

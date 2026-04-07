@@ -11,7 +11,7 @@ import ToastMessage from "./ToastMessage";
 import WelcomeStep from "./WelcomeStep";
 import LMSContext from "../../../contexts/LMSContext";
 
-const totalSteps = 5;
+const totalSteps = 4;
 
 // Map frontend interest IDs to backend values
 const interestMap = {
@@ -19,6 +19,35 @@ const interestMap = {
   "frontend": "Frontend",
   "data": "Data Analysis",
   "product": "Product Management"
+};
+
+// Map sub-topic IDs to readable names
+const subTopicMap = {
+  // UI/UX sub-topics
+  "wireframing": "Wireframing",
+  "prototyping": "Prototyping",
+  "user-research": "User Research",
+  "figma": "Figma",
+  "design-systems": "Design Systems",
+  // Frontend sub-topics
+  "react": "React",
+  "javascript": "JavaScript",
+  "typescript": "TypeScript",
+  "css": "CSS",
+  "vue": "Vue.js",
+  "nextjs": "Next.js",
+  // Data sub-topics
+  "python": "Python",
+  "sql": "SQL",
+  "excel": "Excel",
+  "visualization": "Data Visualization",
+  "statistics": "Statistics",
+  // Product sub-topics
+  "roadmaps": "Product Roadmaps",
+  "okrs": "OKRs",
+  "user-interviews": "User Interviews",
+  "gtm": "Go-to-Market",
+  "agile": "Agile/Scrum"
 };
 
 // Map frontend level to backend values
@@ -34,7 +63,6 @@ function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "" });
   const [confetti, setConfetti] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -53,11 +81,20 @@ function OnboardingFlow() {
     setLoading(true);
     
     try {
-      // Convert frontend values to backend values
-      const backendInterests = selectedInterests.map(id => interestMap[id] || id);
+      // Get main interests only (ui-ux, frontend, data, product)
+      const mainInterests = selectedInterests.filter(id => interestMap[id]);
+      
+      // Get sub-topics only
+      const subTopics = selectedInterests.filter(id => !interestMap[id]);
+      
+      // Convert to backend format
+      const backendMainInterests = mainInterests.map(id => interestMap[id]);
+      const backendSubTopics = subTopics.map(id => subTopicMap[id] || id);
+      
       const backendLevel = levelMap[selectedLevel] || 1;
 
-      await completeOnboarding(backendInterests, backendLevel);
+      // Send both main interests and sub-topics to backend
+      await completeOnboarding(backendMainInterests, backendLevel, backendSubTopics);
 
       const colors = [
         "#2563EB",
@@ -129,36 +166,20 @@ function OnboardingFlow() {
         ),
         4: (
           <CoursesStep
-            enrolledCourses={enrolledCourses}
-            onToggleEnroll={(courseId) =>
-              setEnrolledCourses((prev) => {
-                const exists = prev.includes(courseId);
-                const next = exists
-                  ? prev.filter((item) => item !== courseId)
-                  : [...prev, courseId];
-
-                if (!exists) {
-                  setToast({
-                    show: true,
-                    message: "Enrolled! Course added to your dashboard.",
-                  });
-                }
-
-                return next;
-              })
+            selectedInterests={selectedInterests}
+            onToggleEnroll={(topicId) =>
+              setSelectedInterests((prev) =>
+                prev.includes(topicId)
+                  ? prev.filter((item) => item !== topicId)
+                  : [...prev, topicId],
+              )
             }
             onBack={() => setCurrentStep(3)}
-            onNext={() => setCurrentStep(5)}
-          />
-        ),
-        5: (
-          <AiSupportStep
-            onFinish={handleFinish}
-            loading={loading}
+            onNext={handleFinish}
           />
         ),
       })[currentStep],
-    [currentStep, enrolledCourses, selectedInterests, selectedLevel, loading],
+    [currentStep, selectedInterests, selectedLevel, loading],
   );
 
   return (

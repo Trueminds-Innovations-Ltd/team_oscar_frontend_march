@@ -2,6 +2,8 @@ import React from 'react';
 import styles from '../dashboard.module.css';
 
 const BADGE_MAP = {
+  available: styles['tf-badge-completed'],
+  scheduled: styles['tf-badge-pending'],
   urgent: styles['tf-badge-urgent'],
   inreview: styles['tf-badge-inreview'],
   pending: styles['tf-badge-pending'],
@@ -9,6 +11,8 @@ const BADGE_MAP = {
 };
 
 const BADGE_LABELS = {
+  available: 'Available',
+  scheduled: 'Scheduled',
   urgent: 'Urgent',
   inreview: 'In Review',
   pending: 'Pending',
@@ -26,10 +30,10 @@ const defaultReviews = [
         <path d="M8 21h8M12 17v4" />
       </svg>
     ),
-    title: 'Wireframe Prototype - Mod 3',
-    student: 'James Adewale - UX Fundamentals',
-    status: 'urgent',
-    date: 'Tomorrow',
+    title: 'UX Fundamentals & Design Thinking',
+    category: 'Design',
+    status: 'available',
+    date: 'Available now',
   },
   {
     id: 2,
@@ -42,10 +46,10 @@ const defaultReviews = [
         <line x1="6" y1="20" x2="6" y2="14" />
       </svg>
     ),
-    title: 'Data Cleaning Exercise #4',
-    student: 'Tunde Collins - Python Analytics',
-    status: 'inreview',
-    date: 'Mar 13th',
+    title: 'Modern React Development',
+    category: 'Frontend',
+    status: 'scheduled',
+    date: '3 days more to go',
   },
   {
     id: 3,
@@ -57,10 +61,10 @@ const defaultReviews = [
         <polyline points="14 2 14 8 20 8" />
       </svg>
     ),
-    title: 'User Persona Research - Mod 2',
-    student: 'Amaka Osei - UX Fundamentals',
-    status: 'pending',
-    date: 'Mar 15th',
+    title: 'Backend with Node.js',
+    category: 'Backend',
+    status: 'scheduled',
+    date: 'Tomorrow',
   },
   {
     id: 4,
@@ -72,10 +76,10 @@ const defaultReviews = [
         <polyline points="8 6 2 12 8 18" />
       </svg>
     ),
-    title: 'REST API Integration Lab',
-    student: 'Sara Idowu - Full-Stack React',
-    status: 'completed',
-    date: 'Mar 13th',
+    title: 'Product Management Basics',
+    category: 'Product',
+    status: 'scheduled',
+    date: 'Mar 20th',
   },
 ];
 
@@ -83,7 +87,7 @@ const PendingReviews = ({ reviews = defaultReviews, onViewAll }) => {
   return (
     <div className={styles['tf-reviews-card']}>
       <div className={styles['tf-card-header']}>
-        <div className={styles['tf-card-title']}>Pending Reviews</div>
+        <div className={styles['tf-card-title']}>Urgent Courses</div>
         <div className={styles['tf-view-all-link']} onClick={onViewAll} role="button" tabIndex={0}>
           View all
         </div>
@@ -96,7 +100,7 @@ const PendingReviews = ({ reviews = defaultReviews, onViewAll }) => {
           </div>
           <div className={styles['tf-review-body']}>
             <div className={styles['tf-review-title']}>{review.title}</div>
-            <div className={styles['tf-review-student']}>{review.student}</div>
+            <div className={styles['tf-review-student']}>{review.category}</div>
           </div>
           <span className={`${styles['tf-status-badge']} ${BADGE_MAP[review.status]}`}>
             {BADGE_LABELS[review.status]}

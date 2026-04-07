@@ -9,97 +9,117 @@ import { TbNotes } from "react-icons/tb";
 import { GoTasklist } from "react-icons/go";
 import WelcomeUser from "../components/WelcomeUser";
 import LearningModuleCard from "../components/LearningModuleCard";
-import UrgentTasks from "../components/UrgentTasks";
+import UrgentCourses from "../components/UrgentCourses";
 import Statistics from "../components/Statistics";
+import { CourseProvider } from "../../../contexts/CourseContext";
+import CourseReadingModal from "../../../shared/components/CourseReadingModal";
+import { useCourses } from "../../../contexts/CourseContext";
 
-function Dashboard() {
+function DashboardContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { readingModal, updateProgress, closeReadingModal } = useCourses();
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
-
     return () => {
       document.body.style.overflow = "";
     };
   }, [isSidebarOpen]);
 
   return (
-    <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">
-      <Sidebar
-        isMobileOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+    <>
+      <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">
+        <Sidebar
+          isMobileOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
 
-      {isSidebarOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-          aria-label="Close sidebar overlay"
+        {isSidebarOpen && (
+          <button
+            type="button"
+            className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+            aria-label="Close sidebar overlay"
+          />
+        )}
+
+        <section className="flex w-full flex-col min-h-screen lg:ml-[250px]">
+          <NavBar
+            onOpenSidebar={() => setIsSidebarOpen(true)}
+            isSidebarOpen={isSidebarOpen}
+          />
+
+          <main className="mt-3 w-full px-4 py-6 sm:px-6 lg:px-7">
+            <WelcomeUser />
+
+            <section>
+              <DashboardMetrics>
+                <SummaryCard>
+                  <FaGraduationCap size={20} />
+
+                  <div>
+                    <p className="font-medium">Progress</p>
+                    <p className="font-medium">10% Complete</p>
+                  </div>
+                </SummaryCard>
+
+                <SummaryCard>
+                  <HiOutlineBookOpen size={20} />
+
+                  <div>
+                    <p className="font-medium">Courses</p>
+                    <p className="font-medium">5</p>
+                  </div>
+                </SummaryCard>
+
+                <SummaryCard>
+                  <TbNotes size={20} />
+
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">Completed Courses</p>
+                    <p className="font-medium">2/5</p>
+                  </div>
+                </SummaryCard>
+
+                <SummaryCard>
+                  <GoTasklist size={20} />
+
+                  <div>
+                    <p className="font-medium">Task</p>
+                    <p className="font-medium">2/5</p>
+                  </div>
+                </SummaryCard>
+              </DashboardMetrics>
+            </section>
+
+            <section className="mt-7 w-full">
+              <LearningModuleCard />
+            </section>
+
+            <section className="mt-6 grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
+              <UrgentCourses />
+              <Statistics />
+            </section>
+          </main>
+        </section>
+      </section>
+
+      {readingModal.isOpen && (
+        <CourseReadingModal
+          course={readingModal.course}
+          onClose={closeReadingModal}
+          onProgressUpdate={updateProgress}
         />
       )}
+    </>
+  );
+}
 
-      {/* Main dashboard */}
-      <section className="flex w-full flex-col min-h-screen lg:ml-[250px]">
-        <NavBar
-          onOpenSidebar={() => setIsSidebarOpen(true)}
-          isSidebarOpen={isSidebarOpen}
-        />
-
-        <main className="mt-3 w-full px-4 py-6 sm:px-6 lg:px-7">
-          <WelcomeUser />
-
-          <section>
-            <DashboardMetrics>
-              <SummaryCard>
-                <FaGraduationCap size={20} />
-
-                <div>
-                  <p className="font-medium">Progress</p>
-                  <p className="font-medium">10% Complete</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <HiOutlineBookOpen size={20} />
-
-                <div>
-                  <p className="font-medium">Courses</p>
-                  <p className="font-medium">5</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <TbNotes size={20} />
-
-                <div className="min-w-0">
-                  <p className="truncate font-medium">Completed Courses</p>
-                  <p className="font-medium">2/5</p>
-                </div>
-              </SummaryCard>
-
-              <SummaryCard>
-                <GoTasklist size={20} />
-
-                <div>
-                  <p className="font-medium">Task</p>
-                  <p className="font-medium">2/5</p>
-                </div>
-              </SummaryCard>
-            </DashboardMetrics>
-          </section>
-
-          <section className="mt-7 w-full">
-            <LearningModuleCard />
-          </section>
-
-          <section className="mt-6 grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
-            <UrgentTasks />
-            <Statistics />
-          </section>
-        </main>
-      </section>
-    </section>
+function Dashboard() {
+  return (
+    <CourseProvider>
+      <DashboardContent />
+    </CourseProvider>
   );
 }
 
