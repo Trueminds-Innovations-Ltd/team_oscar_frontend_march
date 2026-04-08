@@ -1,30 +1,74 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
-const fields = [
-  { id: "lastName", label: "Last Name", value: "Wayne", type: "text" },
-  { id: "firstName", label: "Other Names", value: "John Doe", type: "text" },
-  {
-    id: "email",
-    label: "Email",
-    value: "johndoe@gmail.com",
-    type: "email",
-    disabled: true,
-  },
-  { id: "country", label: "Country", value: "Nigeria", type: "text" },
-  { id: "state", label: "State", value: "Lagos", type: "text" },
-  { id: "city", label: "City", value: "Ajah", type: "text" },
-];
+import LMSContext from "../../../contexts/LMSContext";
+import api from "../../../shared/api";
 
 const EditProfileForm = () => {
   const navigate = useNavigate();
+  const { user, token, fetchUser } = useContext(LMSContext);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    country: "",
+    state: "",
+    city: ""
+  });
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        phone: user.phone || "",
+        country: user.country || "",
+        state: user.state || "",
+        city: user.city || ""
+      });
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await api.put('/auth/profile', formData, token);
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        fetchUser();
+        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        setTimeout(() => navigate("/profile"), 1500);
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || "Failed to update profile" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return "??";
+    const parts = name.split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
     <section className="rounded-[32px] bg-[linear-gradient(180deg,#f8f8ff_0%,#f4f5ff_100%)] p-5 shadow-[0_18px_45px_rgba(15,23,42,0.05)] ring-1 ring-slate-200/70 sm:p-8 lg:p-10">
       <div className="mx-auto max-w-3xl">
         <div className="flex flex-col items-center">
           <div className="relative">
             <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[radial-gradient(circle_at_top,#334155,#111827)] text-3xl font-semibold text-white shadow-lg sm:h-32 sm:w-32">
-              JD
+              {getInitials(formData.name)}
             </div>
             <button
               type="button"
@@ -42,35 +86,109 @@ const EditProfileForm = () => {
           </div>
         </div>
 
-        <form className="mt-8 space-y-4 sm:mt-10">
-          {fields.map((field) => (
-            <label key={field.id} className="block">
-              <span className="mb-2 block text-sm font-medium text-slate-700">
-                {field.label}
-              </span>
-              <div className="relative">
-                {field.type === "email" ? (
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 fill-none stroke-slate-400 stroke-[1.8]"
-                  >
-                    <path d="M4 6h16v12H4z" />
-                    <path d="m4 7 8 6 8-6" />
-                  </svg>
-                ) : null}
-                <input
-                  type={field.type}
-                  defaultValue={field.value}
-                  disabled={field.disabled}
-                  className={`h-14 w-full rounded-2xl border bg-white px-5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 ${
-                    field.disabled
-                      ? "border-slate-200 bg-slate-100 pl-12 text-slate-400"
-                      : "border-slate-300"
-                  }`}
-                />
-              </div>
+        <form className="mt-8 space-y-4 sm:mt-10" onSubmit={handleSubmit}>
+          {message.text && (
+            <div className={`rounded-lg p-3 text-sm ${message.type === 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+              {message.text}
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-700">
+              Full Name
             </label>
-          ))}
+            <div className="relative">
+              <input
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                className="h-14 w-full rounded-2xl border border-slate-300 bg-white px-5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                placeholder="Enter your name"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+              Email
+            </label>
+            <div className="relative">
+              <svg
+                viewBox="0 0 24 24"
+                className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 fill-none stroke-slate-400 stroke-[1.8]"
+              >
+                <path d="M4 6h16v12H4z" />
+                <path d="m4 7 8 6 8-6" />
+              </svg>
+              <input
+                id="email"
+                type="email"
+                value={user?.email || ""}
+                disabled
+                className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-100 px-5 pl-12 text-base text-slate-400 outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-700">
+              Phone
+            </label>
+            <div className="relative">
+              <input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className="h-14 w-full rounded-2xl border border-slate-300 bg-white px-5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                placeholder="+2348162345678"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="country" className="mb-2 block text-sm font-medium text-slate-700">
+                Country
+              </label>
+              <input
+                id="country"
+                type="text"
+                value={formData.country}
+                onChange={handleChange}
+                className="h-14 w-full rounded-2xl border border-slate-300 bg-white px-5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                placeholder="Nigeria"
+              />
+            </div>
+            <div>
+              <label htmlFor="state" className="mb-2 block text-sm font-medium text-slate-700">
+                State
+              </label>
+              <input
+                id="state"
+                type="text"
+                value={formData.state}
+                onChange={handleChange}
+                className="h-14 w-full rounded-2xl border border-slate-300 bg-white px-5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                placeholder="Lagos"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="city" className="mb-2 block text-sm font-medium text-slate-700">
+              City
+            </label>
+            <input
+              id="city"
+              type="text"
+              value={formData.city}
+              onChange={handleChange}
+              className="h-14 w-full rounded-2xl border border-slate-300 bg-white px-5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+              placeholder="Ajah"
+            />
+          </div>
 
           <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end">
             <button
@@ -85,9 +203,10 @@ const EditProfileForm = () => {
             </button>
             <button
               type="submit"
-              className="inline-flex h-14 items-center justify-center rounded-full bg-primary-color px-8 text-sm font-semibold text-white transition hover:bg-indigo-900"
+              disabled={loading}
+              className="inline-flex h-14 items-center justify-center rounded-full bg-primary-color px-8 text-sm font-semibold text-white transition hover:bg-indigo-900 disabled:opacity-50"
             >
-              Save Changes
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

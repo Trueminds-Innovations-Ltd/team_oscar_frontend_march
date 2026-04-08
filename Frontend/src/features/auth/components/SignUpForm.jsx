@@ -6,6 +6,8 @@ import { eyeOutline } from "ionicons/icons";
 import { mailOutline } from "ionicons/icons";
 import { lockClosedOutline } from "ionicons/icons";
 import { personOutline } from "ionicons/icons";
+import { callOutline } from "ionicons/icons";
+import { locationOutline } from "ionicons/icons";
 import Input from "./Input";
 import Button from "../../../shared/ui/Button";
 import LMSContext from "../../../contexts/LMSContext";
@@ -15,6 +17,10 @@ function SignUpForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("Nigeria");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState(1);
@@ -43,7 +49,16 @@ function SignUpForm() {
     setLoading(true);
 
     try {
-      await signup(name, email, password, role);
+      const userData = {
+        name,
+        email,
+        phone,
+        country,
+        state,
+        city
+      };
+      
+      await signup(name, email, password, role, userData);
       
       // Auto login after signup
       await login(email, password);
@@ -100,6 +115,70 @@ function SignUpForm() {
               placeholder="Johndoe@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="text-gray-900 text-[14px] leading-5 font-medium pb-1.5">
+            Phone
+          </label>
+          <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
+            <IonIcon icon={callOutline} className="text-gray-500 text-xl" />
+            <Input
+              type="tel"
+              placeholder="+2348162345678"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-gray-900 text-[14px] leading-5 font-medium pb-1.5">
+              Country
+            </label>
+            <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
+              <IonIcon icon={locationOutline} className="text-gray-500 text-xl" />
+              <Input
+                type="text"
+                placeholder="Nigeria"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-gray-900 text-[14px] leading-5 font-medium pb-1.5">
+              State
+            </label>
+            <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
+              <Input
+                type="text"
+                placeholder="Lagos"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="text-gray-900 text-[14px] leading-5 font-medium pb-1.5">
+            City
+          </label>
+          <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
+            <IonIcon icon={locationOutline} className="text-gray-500 text-xl" />
+            <Input
+              type="text"
+              placeholder="Ajah"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               required
             />
           </div>

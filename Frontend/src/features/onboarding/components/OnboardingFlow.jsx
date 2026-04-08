@@ -11,14 +11,71 @@ import ToastMessage from "./ToastMessage";
 import WelcomeStep from "./WelcomeStep";
 import LMSContext from "../../../contexts/LMSContext";
 
-const totalSteps = 5;
+const totalSteps = 4;
 
 // Map frontend interest IDs to backend values
 const interestMap = {
   "ui-ux": "UI/UX",
   "frontend": "Frontend",
+  "backend": "Backend",
   "data": "Data Analysis",
-  "product": "Product Management"
+  "product": "Product Management",
+  "cloud": "Cloud Engineering",
+  "networking": "Networking",
+  "security": "Cyber Security"
+};
+
+// Map sub-topic IDs to readable names
+const subTopicMap = {
+  // UI/UX sub-topics
+  "wireframing": "Wireframing",
+  "prototyping": "Prototyping",
+  "user-research": "User Research",
+  "figma": "Figma",
+  "design-systems": "Design Systems",
+  // Frontend sub-topics
+  "react": "React",
+  "javascript": "JavaScript",
+  "typescript": "TypeScript",
+  "css": "CSS",
+  "vue": "Vue.js",
+  "nextjs": "Next.js",
+  // Backend sub-topics
+  "nodejs": "Node.js",
+  "python": "Python",
+  "java": "Java",
+  "golang": "Go",
+  "express": "Express.js",
+  "database": "Database Design",
+  // Data sub-topics
+  "sql": "SQL",
+  "excel": "Excel",
+  "visualization": "Data Visualization",
+  "statistics": "Statistics",
+  // Product sub-topics
+  "roadmaps": "Product Roadmaps",
+  "okrs": "OKRs",
+  "user-interviews": "User Interviews",
+  "gtm": "Go-to-Market",
+  "agile": "Agile/Scrum",
+  // Cloud sub-topics
+  "aws": "AWS",
+  "azure": "Azure",
+  "gcp": "Google Cloud",
+  "docker": "Docker",
+  "kubernetes": "Kubernetes",
+  "devops": "DevOps",
+  // Networking sub-topics
+  "ccna": "CCNA",
+  "network-security": "Network Security",
+  "routing": "Routing & Switching",
+  "firewalls": "Firewalls",
+  "voip": "VoIP",
+  // Security sub-topics
+  "penetration": "Penetration Testing",
+  "ethical-hacking": "Ethical Hacking",
+  "security-plus": "Security+",
+  "cissp": "CISSP",
 };
 
 // Map frontend level to backend values
@@ -34,10 +91,45 @@ function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "" });
   const [confetti, setConfetti] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Check if user is already enrolled (has existing interests/subTopics) - means they came from profile
+  const isReturningUser = user?.interests?.length > 0 || user?.subTopics?.length > 0;
+
+  // Pre-select existing user interests/subTopics on mount
+  useEffect(() => {
+    if (user?.interests?.length > 0 || user?.subTopics?.length > 0) {
+      const existingSelections = [];
+      
+      // Map backend interests to frontend IDs
+      const reverseInterestMap = Object.entries(interestMap).reduce((acc, [key, value]) => {
+        acc[value] = key;
+        return acc;
+      }, {});
+      
+      // Add main interests
+      user.interests.forEach(interest => {
+        const frontendId = reverseInterestMap[interest];
+        if (frontendId) {
+          existingSelections.push(frontendId);
+        }
+      });
+      
+      // Add sub-topics
+      user.subTopics?.forEach(subTopic => {
+        const reverseSubTopicMap = Object.entries(subTopicMap).find(([key, value]) => value === subTopic);
+        if (reverseSubTopicMap) {
+          existingSelections.push(reverseSubTopicMap[0]);
+        }
+      });
+      
+      if (existingSelections.length > 0) {
+        setSelectedInterests(existingSelections);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!toast.show) return undefined;
@@ -53,11 +145,20 @@ function OnboardingFlow() {
     setLoading(true);
     
     try {
-      // Convert frontend values to backend values
-      const backendInterests = selectedInterests.map(id => interestMap[id] || id);
+      // Get main interests only (ui-ux, frontend, data, product)
+      const mainInterests = selectedInterests.filter(id => interestMap[id]);
+      
+      // Get sub-topics only
+      const subTopics = selectedInterests.filter(id => !interestMap[id]);
+      
+      // Convert to backend format
+      const backendMainInterests = mainInterests.map(id => interestMap[id]);
+      const backendSubTopics = subTopics.map(id => subTopicMap[id] || id);
+      
       const backendLevel = levelMap[selectedLevel] || 1;
 
-      await completeOnboarding(backendInterests, backendLevel);
+      // Send both main interests and sub-topics to backend
+      await completeOnboarding(backendMainInterests, backendLevel, backendSubTopics);
 
       const colors = [
         "#2563EB",
@@ -129,36 +230,20 @@ function OnboardingFlow() {
         ),
         4: (
           <CoursesStep
-            enrolledCourses={enrolledCourses}
-            onToggleEnroll={(courseId) =>
-              setEnrolledCourses((prev) => {
-                const exists = prev.includes(courseId);
-                const next = exists
-                  ? prev.filter((item) => item !== courseId)
-                  : [...prev, courseId];
-
-                if (!exists) {
-                  setToast({
-                    show: true,
-                    message: "Enrolled! Course added to your dashboard.",
-                  });
-                }
-
-                return next;
-              })
+            selectedInterests={selectedInterests}
+            onToggleEnroll={(topicId) =>
+              setSelectedInterests((prev) =>
+                prev.includes(topicId)
+                  ? prev.filter((item) => item !== topicId)
+                  : [...prev, topicId],
+              )
             }
             onBack={() => setCurrentStep(3)}
-            onNext={() => setCurrentStep(5)}
-          />
-        ),
-        5: (
-          <AiSupportStep
-            onFinish={handleFinish}
-            loading={loading}
+            onNext={handleFinish}
           />
         ),
       })[currentStep],
-    [currentStep, enrolledCourses, selectedInterests, selectedLevel, loading],
+    [currentStep, selectedInterests, selectedLevel, loading],
   );
 
   return (
@@ -166,7 +251,11 @@ function OnboardingFlow() {
       <BackgroundDecor />
 
       <div className="app">
-        <OnboardingTopbar onSkip={() => handleFinish()} />
+        <OnboardingTopbar 
+          onSkip={() => handleFinish()} 
+          showBackToProfile={isReturningUser}
+          onBackToProfile={() => navigate("/profile")}
+        />
         <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
 
         <div className="card">
