@@ -1,6 +1,6 @@
 function SummaryCard ({children}) {
   return (
-    <section className="bg-white border border-gray-300 p-4 w-[250px] rounded-xl flex items-center gap-4">
+    <section className="w-full rounded-xl border border-gray-300 bg-white p-4 flex items-center gap-4 min-w-0">
         {children}
     </section>
   )
