@@ -13,6 +13,7 @@ import Dashboard from "./features/dashboard/pages/Dashboard";
 import Courses from "./features/courses/pages/Courses";
 import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
 import EditProfilePage from "./features/profile/components/EditProfilePage";
+import MessagesPage from "./features/messages-2/pages/MessagesPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -66,6 +67,7 @@ function App() {
           <Route path="/studentDashboard" element={<StudentDashboard />} />
           <Route path="/profile" element={<ProfileOverviewPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/message-page" element={<MessagesPage />} />
 
           <Route
             path="/dashboard"

@@ -57,7 +57,7 @@ const ProfileHeroCard = ({ user }) => {
         <div className="-mt-16 flex flex-col items-center sm:-mt-20">
           <div className="relative">
             <div>
-              <Image src="./images/dp.png" alt="dp" />
+              <Image className="w-30" src="./images/dp.png" alt="dp" />
             </div>
             {/* <div className="flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-white bg-[radial-gradient(circle_at_top,#334155,#111827)] text-3xl font-semibold text-white shadow-xl sm:h-32 sm:w-32">
               JD
