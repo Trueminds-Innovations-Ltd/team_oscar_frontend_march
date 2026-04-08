@@ -46,6 +46,8 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState("");
+  const [pendingTutorSelection, setPendingTutorSelection] = useState(false);
+  const [lastTutorMatchMessage, setLastTutorMatchMessage] = useState(null);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
@@ -77,6 +79,62 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
     e?.preventDefault();
     if (!input.trim() || isTyping) return;
 
+    if (pendingTutorSelection) {
+      const tutorNumber = parseInt(input.trim());
+      if (isNaN(tutorNumber) || tutorNumber < 1) {
+        setError("Please enter a valid number");
+        return;
+      }
+
+      setError("");
+      setIsTyping(true);
+      const currentInput = input;
+      setInput("");
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.post('/ai/select-tutor', {
+          tutorIndex: tutorNumber,
+          originalMessage: lastTutorMatchMessage
+        }, token);
+
+        const successMessage = {
+          id: `ai-${Date.now()}`,
+          role: "ai",
+          content: response.data?.message || "I've connected you to the tutor!",
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, {
+          id: `user-${Date.now()}`,
+          role: "user",
+          content: currentInput,
+          timestamp: new Date()
+        }, successMessage]);
+        
+        setPendingTutorSelection(false);
+        setLastTutorMatchMessage(null);
+        onNewMessage?.();
+      } catch (err) {
+        const errorMsg = {
+          id: `error-${Date.now()}`,
+          role: "ai",
+          content: err.response?.data?.message || "Sorry, I couldn't connect to that tutor. Please try again.",
+          timestamp: new Date(),
+          isError: true
+        };
+        setMessages(prev => [...prev, {
+          id: `user-${Date.now()}`,
+          role: "user",
+          content: currentInput,
+          timestamp: new Date()
+        }, errorMsg]);
+      } finally {
+        setIsTyping(false);
+      }
+      return;
+    }
+
     const userMessage = {
       id: `user-${Date.now()}`,
       role: "user",
@@ -95,12 +153,20 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
         message: userMessage.content
       }, token);
 
+      const needsSelection = response.data?.response?.needsTutorSelection;
+      
+      if (needsSelection) {
+        setPendingTutorSelection(true);
+        setLastTutorMatchMessage(userMessage.content);
+      }
+
       const aiMessage = {
         id: `ai-${Date.now()}`,
         role: "ai",
         content: response.data?.response?.reply || "I received your message. How can I help you further?",
         suggestions: response.data?.response?.suggestions || [],
         tutorMatch: response.data?.response?.tutorMatch || null,
+        needsTutorSelection: needsSelection,
         timestamp: new Date()
       };
 
@@ -189,6 +255,13 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
               }`}
             >
               <p className="px-3 py-2 text-sm leading-relaxed">{msg.content}</p>
+              
+              {msg.needsTutorSelection && (
+                <div className="px-3 pb-2">
+                  <p className="text-xs font-semibold text-blue-600">Enter the number of the tutor you want to connect with:</p>
+                </div>
+              )}
+              
               {msg.suggestions && msg.suggestions.length > 0 && (
                 <div className="px-3 pb-2 flex flex-wrap gap-1">
                   {msg.suggestions.map((suggestion, idx) => (
@@ -206,18 +279,14 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
               {msg.tutorMatch && msg.tutorMatch.tutors && msg.tutorMatch.tutors.length > 0 && (
                 <div className="px-3 pb-2">
                   <div className="bg-green-50 border border-green-200 rounded-lg p-2 mt-1">
-                    <p className="text-xs font-semibold text-green-700 mb-1">Tutors Notified:</p>
+                    <p className="text-xs font-semibold text-green-700 mb-1">Available Tutors:</p>
                     {msg.tutorMatch.tutors.map((tutor, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-xs text-green-600">
-                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                        <span>{tutor.name}</span>
+                        <span className="font-medium">{idx + 1}. {tutor.name}</span>
                         <span className="text-green-400">•</span>
-                        <span className="text-green-500">{tutor.course}</span>
+                        <span className="text-green-500">{tutor.program}</span>
                       </div>
                     ))}
-                    <p className="text-[10px] text-green-500 mt-2">
-                      They'll respond to your notification shortly!
-                    </p>
                   </div>
                 </div>
               )}
@@ -245,9 +314,12 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
             ref={inputRef}
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (error) setError("");
+            }}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything..."
+            placeholder={pendingTutorSelection ? "Enter tutor number..." : "Ask me anything..."}
             className="flex-1 bg-transparent outline-none text-sm text-gray-700 placeholder-gray-400"
             disabled={isTyping}
           />

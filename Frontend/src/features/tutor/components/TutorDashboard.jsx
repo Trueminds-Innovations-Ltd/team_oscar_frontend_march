@@ -44,12 +44,12 @@ const TutorDashboard = () => {
           
           <div className={styles['tf-grid']}>
             <div className={styles['tf-main-column']}>
-              <CourseCard />
+              <CourseCard onManageCourse={() => {}} />
               <TutorInsights />
             </div>
             
             <div className={styles['tf-side-column']}>
-              <PendingReviews />
+              <PendingReviews onViewAll={() => {}} />
             </div>
           </div>
         </main>

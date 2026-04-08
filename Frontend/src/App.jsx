@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { LMSProvider } from "./contexts/LMSContext";
+import { CourseProvider } from "./contexts/CourseContext";
 import LMSContext from "./contexts/LMSContext";
 import Login from "./features/auth/pages/Login";
 import SignUp from "./features/auth/pages/SignUp";
@@ -50,6 +51,38 @@ function DashboardRouter() {
   );
 }
 
+function CoursesPage() {
+  return (
+    <CourseProvider>
+      <Courses />
+    </CourseProvider>
+  );
+}
+
+function ProfilePage() {
+  return (
+    <CourseProvider>
+      <ProfileOverviewPage />
+    </CourseProvider>
+  );
+}
+
+function EditProfilePageWrapper() {
+  return (
+    <CourseProvider>
+      <EditProfilePage />
+    </CourseProvider>
+  );
+}
+
+function ActiveCoursesPage() {
+  return (
+    <CourseProvider>
+      <ActiveCourses />
+    </CourseProvider>
+  );
+}
+
 function App() {
   return (
     <LMSProvider>
@@ -72,16 +105,7 @@ function App() {
             path="/courses"
             element={
               <ProtectedRoute>
-                <Courses />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/active-courses"
-            element={
-              <ProtectedRoute>
-                <ActiveCourses />
+                <CoursesPage />
               </ProtectedRoute>
             }
           />
@@ -90,19 +114,30 @@ function App() {
             path="/profile"
             element={
               <ProtectedRoute>
-                <ProfileOverviewPage />
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
           
           <Route
-            path="/edit-profile"
+            path="/profile/edit"
             element={
               <ProtectedRoute>
-                <EditProfilePage />
+                <EditProfilePageWrapper />
               </ProtectedRoute>
             }
           />
+          
+          <Route
+            path="/active-courses"
+            element={
+              <ProtectedRoute>
+                <ActiveCoursesPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </LMSProvider>

@@ -22,7 +22,19 @@ const courseTitleToProgram = {
   "Cloud Engineering": "Cloud",
   "Networking": "Networking",
   "Cyber Security": "Cyber Security",
-  "Design": "UI/UX"
+  "Design": "UI/UX",
+  "Development": "Frontend"
+};
+
+const programNameMapping = {
+  "Frontend Development": "Frontend",
+  "UI/UX Design": "UI/UX",
+  "Backend Development": "Backend",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product",
+  "Cloud Engineering": "Cloud",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
 };
 
 const programSubTopics = {
@@ -82,20 +94,51 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/courses/tutor', token);
-      const allCourses = response.data.courses || [];
+      const tutorInterestsList = user?.interests || [];
+      const tutorSubTopicsList = user?.subTopics || [];
       
-      const filteredCourses = allCourses.filter(course => {
-        const program = courseTitleToProgram[course.title] || course.category;
-        const matchesProgram = tutorPrograms.includes(program);
-        const matchesTags = (course.tags || []).some(tag => tutorInterests.includes(tag));
-        
-        return matchesProgram || matchesTags;
-      });
+      console.log('Tutor interests:', tutorInterestsList);
+      console.log('Tutor subTopics:', tutorSubTopicsList);
       
-      setCourses(filteredCourses);
+      const programSubTopicsMap = {
+        "Frontend": ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
+        "UI/UX": ["Wireframing", "Prototyping", "User Research", "Figma", "Design Systems"],
+        "Backend": ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
+        "Data Analysis": ["Python", "SQL", "Excel", "Data Visualization", "Statistics"],
+        "Product": ["Product Roadmaps", "OKRs", "User Interviews", "Go-to-Market", "Agile/Scrum"],
+        "Cloud": ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
+        "Networking": ["CCNA", "Network Security", "Routing & Switching", "Firewalls", "VoIP"],
+        "Cyber Security": ["Penetration Testing", "Ethical Hacking", "Security+", "CISSP"]
+      };
+      
+      const courseTitleToProgram = {
+        "Frontend Development": "Frontend",
+        "UI/UX Design": "UI/UX",
+        "Backend Development": "Backend",
+        "Data Analysis": "Data Analysis",
+        "Product Management": "Product",
+        "Cloud Engineering": "Cloud",
+        "Networking": "Networking",
+        "Cyber Security": "Cyber Security"
+      };
+      
+      const programsToShow = tutorInterestsList.map(interest => {
+        return courseTitleToProgram[interest] || interest;
+      }).filter(Boolean);
+      
+      console.log('Programs to show:', programsToShow);
+      
+      const coursesData = programsToShow.map(program => ({
+        _id: program,
+        title: program,
+        subTopics: programSubTopicsMap[program] || [],
+        isProgram: true
+      }));
+      
+      console.log('Courses data:', coursesData);
+      setCourses(coursesData);
     } catch (err) {
-      console.error('Failed to fetch courses:', err);
+      console.error('Failed to process courses:', err);
     } finally {
       setLoading(false);
     }
@@ -109,16 +152,30 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
   
   const selectedProgram = selectedCourse ? getProgramForCourse(selectedCourse.title) : null;
   
+  const getSubTopicsForProgram = (program) => {
+    const map = {
+      "Frontend": ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
+      "UI/UX": ["Wireframing", "Prototyping", "User Research", "Figma", "Design Systems"],
+      "Backend": ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
+      "Data Analysis": ["Python", "SQL", "Excel", "Data Visualization", "Statistics"],
+      "Product": ["Product Roadmaps", "OKRs", "User Interviews", "Go-to-Market", "Agile/Scrum"],
+      "Cloud": ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
+      "Networking": ["CCNA", "Network Security", "Routing & Switching", "Firewalls", "VoIP"],
+      "Cyber Security": ["Penetration Testing", "Ethical Hacking", "Security+", "CISSP"]
+    };
+    return map[program] || [];
+  };
+  
   // Get sub-topics the tutor is enrolled in for this program
   const enrolledSubTopicsForProgram = tutorSubTopics.filter(st => {
-    const allProgramSubTopics = programSubTopics[selectedProgram] || [];
+    const allProgramSubTopics = getSubTopicsForProgram(selectedProgram);
     return allProgramSubTopics.includes(st);
   });
   
   // Show only enrolled sub-topics if available, otherwise show all for the program
   const availableSubTopics = enrolledSubTopicsForProgram.length > 0 
     ? enrolledSubTopicsForProgram 
-    : (selectedProgram && programSubTopics[selectedProgram] ? programSubTopics[selectedProgram] : tutorSubTopics);
+    : (selectedProgram ? getSubTopicsForProgram(selectedProgram) : tutorSubTopics);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -187,8 +244,12 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
 
     setSubmitting(true);
     try {
+      const selectedProgram = courses.find(c => c._id === formData.course);
+      const programTitle = selectedProgram ? (programLabels[selectedProgram.title] || selectedProgram.title) : '';
+      
       const payload = {
         course: formData.course,
+        courseName: programTitle,
         subTopic: formData.subTopic,
         fileUrl: formData.fileUrl,
         linkUrl: formData.linkUrl,
@@ -249,22 +310,11 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
               disabled={loading}
             >
               <option value="">Choose a program...</option>
-              {(() => {
-                const uniquePrograms = [];
-                const seen = new Set();
-                courses.forEach(course => {
-                  const program = courseTitleToProgram[course.title] || course.category || 'Other';
-                  if (!seen.has(program)) {
-                    seen.add(program);
-                    uniquePrograms.push({ program, courseId: course._id });
-                  }
-                });
-                return uniquePrograms.map(({ program, courseId }) => (
-                  <option key={program} value={courseId}>
-                    {programLabels[program] || program}
-                  </option>
-                ));
-              })()}
+              {courses.map(course => (
+                <option key={course._id} value={course._id}>
+                  {programLabels[course.title] || course.title}
+                </option>
+              ))}
             </select>
             {courses.length === 0 && !loading && (
               <p className="mt-1 text-sm text-gray-500">

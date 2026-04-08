@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../dashboard.module.css';
+import api from '../../../shared/api';
 
-const Greeting = ({ user, taskCount = 8, onCreateSession }) => {
+const Greeting = ({ user, onCreateSession }) => {
+  const [taskCount, setTaskCount] = useState(0);
   const firstName = user?.name ? user.name.split(' ')[0] : 'Tutor';
+
+  useEffect(() => {
+    fetchTaskCount();
+  }, []);
+
+  const fetchTaskCount = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get('/notifications/tutor-details', token);
+      if (response.data) {
+        setTaskCount(response.data.taskCount || 0);
+      }
+    } catch (error) {
+      console.error('Failed to fetch task count:', error);
+    }
+  };
   
   return (
     <div className={styles['tf-greeting']}>
