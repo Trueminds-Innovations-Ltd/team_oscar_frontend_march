@@ -93,10 +93,10 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/message-page" element={<MessagesPage />} />
           <Route path="/courses" element={<Courses />} />
-          <Route path="/profile" element={<ProfileOverviewPage />} /> */}
+          <Route path="/profile" element={<ProfileOverviewPage />} />
 
           <Route
             path="/dashboard"
