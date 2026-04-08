@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "../../../shared/ui/Image";
+import { FaUser } from "react-icons/fa";
 
 const SocialIcon = ({ label }) => {
   const icons = {
@@ -45,23 +45,29 @@ const SocialIcon = ({ label }) => {
 };
 
 const ProfileHeroCard = ({ user }) => {
+  const firstName = user?.fullName ? user.fullName.split(" ")[0] : "User";
+  const initials = firstName.substring(0, 2).toUpperCase();
+
   return (
     <section className="overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.06)] ring-1 ring-slate-200/80">
       <div className="relative h-40 sm:h-52 lg:h-64">
-        <div>
-          <Image src="./images/coverphoto.png" alt="coverphoto" />
-        </div>
+        <div className="h-full w-full bg-gradient-to-r from-blue-900 to-indigo-900"></div>
       </div>
 
       <div className="relative px-5 pb-8 sm:px-8 lg:px-12">
         <div className="-mt-16 flex flex-col items-center sm:-mt-20">
           <div className="relative">
-            <div>
-              <Image className="w-30" src="./images/dp.png" alt="dp" />
+            <div className="flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-white bg-[radial-gradient(circle_at_top,#334155,#111827)] text-3xl font-semibold text-white shadow-xl sm:h-32 sm:w-32">
+              {user?.profileImage ? (
+                <img
+                  src={user.profileImage}
+                  alt={firstName}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <FaUser className="text-4xl" />
+              )}
             </div>
-            {/* <div className="flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-white bg-[radial-gradient(circle_at_top,#334155,#111827)] text-3xl font-semibold text-white shadow-xl sm:h-32 sm:w-32">
-              JD
-            </div> */}
             <button
               type="button"
               aria-label="Update profile photo"
@@ -79,18 +85,18 @@ const ProfileHeroCard = ({ user }) => {
 
           <div className="mt-5 text-center">
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              {user.fullName}
+              {user?.fullName || "User"}
             </h2>
             <p className="mt-2 text-sm font-medium text-slate-500 sm:text-base">
-              {user.role}
+              {user?.role || "Student"}
             </p>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-500">
-              {user.bio}
+              {user?.bio || "Learning at TalentFlow Academy"}
             </p>
           </div>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            {user.socials.map((social) => (
+            {user?.socials?.map((social) => (
               <SocialIcon key={social.label} label={social.label} />
             ))}
           </div>

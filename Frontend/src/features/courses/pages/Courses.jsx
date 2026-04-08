@@ -1,10 +1,22 @@
 import Sidebar from "../../../shared/layout/Sidebar";
-import useSidebarOpen  from "../../../shared/hooks/useSidebarOpen";
+import { useEffect, useState, useContext } from "react";
 import CoursesContent from "../components/CoursesContent";
+import LMSContext from "../../../contexts/LMSContext";
+import { CourseProvider } from "../../../contexts/CourseContext";
 import NavBar from "../../../shared/layout/NavBar";
 
-function Courses() {
-  const [isSidebarOpen, setIsSidebarOpen] = useSidebarOpen();
+function CoursesContentWrapper() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user } = useContext(LMSContext);
+  const isTutor = user?.role === 2;
+
+  useEffect(() => {
+    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
 
   return (
     <section className="min-h-screen overflow-x-hidden bg-[#f8f9ff] lg:flex">
@@ -22,7 +34,7 @@ function Courses() {
         />
       )}
 
-      <section className="w-full min-h-screen lg:ml-62.5">
+      <section className="flex w-full flex-col min-h-screen lg:ml-[250px]">
         <NavBar
           onOpenSidebar={() => setIsSidebarOpen(true)}
           isSidebarOpen={isSidebarOpen}
@@ -31,9 +43,18 @@ function Courses() {
         <CoursesContent
           onOpenSidebar={() => setIsSidebarOpen(true)}
           isSidebarOpen={isSidebarOpen}
+          isTutor={isTutor}
         />
       </section>
     </section>
+  );
+}
+
+function Courses() {
+  return (
+    <CourseProvider>
+      <CoursesContentWrapper />
+    </CourseProvider>
   );
 }
 

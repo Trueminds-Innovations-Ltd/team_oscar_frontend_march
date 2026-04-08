@@ -4,7 +4,7 @@ import NavBar from "./NavBar";
 // import Sidebar from "../../../shared/layout/Sidebar";
 // import NavBar from "../../../shared/layout/NavBar";
 
-const NavbarShell = ({ children, title }) => {
+const NavbarShell = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {

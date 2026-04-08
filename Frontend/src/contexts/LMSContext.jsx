@@ -5,7 +5,10 @@ const LMSContext = createContext();
 
 function LMSProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(() => {
+    const savedToken = localStorage.getItem('token');
+    return savedToken || null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,19 +43,18 @@ function LMSProvider({ children }) {
     return { ...response, user: userData };
   };
 
-  const signup = async (name, email, password, role) => {
-    const response = await api.post('/auth/signup', { name, email, password, role });
-    return response;
+  const signup = async (name, email, password, role, userData = {}) => {
+    const response = await api.post('/auth/signup', { name, email, password, role, ...userData });
+    return response.data;
   };
 
-  const completeOnboarding = async (interests, level) => {
-    const response = await api.post('/onboarding', { interests, level }, token);
-    // Update user with new data
+  const completeOnboarding = async (interests, level, subTopics = []) => {
+    const response = await api.post('/onboarding', { interests, level, subTopics }, token);
     if (response.data?.user) {
       setUser(response.data.user);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
-    return response;
+    return response.data;
   };
 
   const logout = () => {

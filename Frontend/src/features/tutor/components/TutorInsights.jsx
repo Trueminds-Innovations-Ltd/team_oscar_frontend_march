@@ -1,9 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../dashboard.module.css';
+import api from '../../../shared/api';
 
-const defaultInsights = {
-  date: 'March 2026',
-  metrics: [
+const TutorInsights = ({ onViewAll }) => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    avgProgress: 0,
+    studentsAssisted: 0,
+    activeSessions: 0,
+    upcomingSessions: 0
+  });
+
+  useEffect(() => {
+    fetchInsights();
+  }, []);
+
+  const fetchInsights = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get('/notifications/tutor-details', token);
+      if (response.data) {
+        setData({
+          avgProgress: response.data.avgProgress || 0,
+          studentsAssisted: response.data.studentsAssisted || 0,
+          activeSessions: response.data.activeSessions || 0,
+          upcomingSessions: response.data.upcomingSessions || 0
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch insights:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const metrics = [
     {
       id: 'progress',
       iconBg: '#eff6ff',
@@ -14,10 +45,10 @@ const defaultInsights = {
         </svg>
       ),
       label: 'Avg. Student Progress',
-      value: '63%',
+      value: `${data.avgProgress}%`,
     },
     {
-      id: 'response',
+      id: 'assisted',
       iconBg: '#d1fae5',
       iconStroke: '#065f46',
       icon: (
@@ -30,7 +61,7 @@ const defaultInsights = {
       value: '1.4 hrs',
     },
     {
-      id: 'assisted',
+      id: 'completed',
       iconBg: '#fef3c7',
       iconStroke: '#d97706',
       icon: (
@@ -42,25 +73,35 @@ const defaultInsights = {
         </svg>
       ),
       label: 'Students Assisted',
-      value: '18 / 24',
+      value: data.studentsAssisted,
     },
-  ],
-  gradesCompleted: 75,
-};
+  ];
 
-const TutorInsights = ({ insights = defaultInsights }) => {
   const circumference = 283;
-  const dashOffset = circumference * (1 - insights.gradesCompleted / 100);
+  const dashOffset = circumference * (1 - data.avgProgress / 100);
+
+  const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  if (loading) {
+    return (
+      <div className={styles['tf-insights-card']}>
+        <div className={styles['tf-card-header']} style={{ marginBottom: 4 }}>
+          <div className={styles['tf-card-title']}>Tutor Insights</div>
+        </div>
+        <div className="p-4 text-center text-gray-500">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles['tf-insights-card']}>
       <div className={styles['tf-card-header']} style={{ marginBottom: 4 }}>
         <div className={styles['tf-card-title']}>Tutor Insights</div>
       </div>
-      <div className={styles['tf-insights-date']}>{insights.date}</div>
+      <div className={styles['tf-insights-date']}>{currentMonth}</div>
 
       <div className={styles['tf-insights-metrics']}>
-        {insights.metrics.map((metric) => (
+        {metrics.map((metric) => (
           <div className={styles['tf-insight-row']} key={metric.id}>
             <div className={styles['tf-insight-icon']} style={{ background: metric.iconBg }}>
               {React.cloneElement(metric.icon, { stroke: metric.iconStroke })}
@@ -86,8 +127,8 @@ const TutorInsights = ({ insights = defaultInsights }) => {
             />
           </svg>
           <div className={styles['tf-circular-center']}>
-            <div className={styles['tf-circular-pct']}>{insights.gradesCompleted}%</div>
-            <div className={styles['tf-circular-lbl']}>Grades<br />Completed</div>
+            <div className={styles['tf-circular-pct']}>{data.avgProgress}%</div>
+            <div className={styles['tf-circular-lbl']}>Progress<br />Completed</div>
           </div>
         </div>
       </div>
