@@ -3,6 +3,50 @@ import { IoClose } from 'react-icons/io5';
 import api from '../../../shared/api';
 import LMSContext from '../../../contexts/LMSContext';
 
+const courseTitleToProgram = {
+  "Modern React Development": "Frontend",
+  "UI/UX Fundamentals": "UI/UX",
+  "UI/UX Design Fundamentals": "UI/UX",
+  "Advanced Figma for UI/UX": "UI/UX",
+  "Node.js Backend Mastery": "Backend",
+  "Python for Data Science": "Data Analysis",
+  "Product Management Basics": "Product",
+  "AWS Cloud Practitioner": "Cloud",
+  "Network Security Fundamentals": "Networking",
+  "Ethical Hacking Intro": "Cyber Security",
+  "Frontend Development": "Frontend",
+  "UI/UX Design": "UI/UX",
+  "Backend Development": "Backend",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product",
+  "Cloud Engineering": "Cloud",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security",
+  "Design": "UI/UX"
+};
+
+const programSubTopics = {
+  "Frontend": ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
+  "UI/UX": ["Wireframing", "Prototyping", "User Research", "Figma", "Design Systems"],
+  "Backend": ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
+  "Data Analysis": ["Python", "SQL", "Excel", "Data Visualization", "Statistics"],
+  "Product": ["Product Roadmaps", "OKRs", "User Interviews", "Go-to-Market", "Agile/Scrum"],
+  "Cloud": ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
+  "Networking": ["CCNA", "Network Security", "Routing & Switching", "Firewalls", "VoIP"],
+  "Cyber Security": ["Penetration Testing", "Ethical Hacking", "Security+", "CISSP"]
+};
+
+const programLabels = {
+  "Frontend": "Frontend Development",
+  "UI/UX": "UI/UX Design",
+  "Backend": "Backend Development",
+  "Data Analysis": "Data Analysis",
+  "Product": "Product Management",
+  "Cloud": "Cloud Engineering",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
+};
+
 function CreateStudySession({ isOpen, onClose, onSuccess }) {
   const { user, token } = useContext(LMSContext);
   const [courses, setCourses] = useState([]);
@@ -23,6 +67,12 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
   const tutorInterests = user?.interests || [];
   const tutorSubTopics = user?.subTopics || [];
 
+  const tutorPrograms = tutorInterests.map(interest => {
+    if (courseTitleToProgram[interest]) return courseTitleToProgram[interest];
+    if (Object.values(courseTitleToProgram).includes(interest)) return interest;
+    return null;
+  }).filter(Boolean);
+
   useEffect(() => {
     if (isOpen && token) {
       fetchCourses();
@@ -35,7 +85,15 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
       const response = await api.get('/courses/tutor', token);
       const allCourses = response.data.courses || [];
       
-      setCourses(allCourses);
+      const filteredCourses = allCourses.filter(course => {
+        const program = courseTitleToProgram[course.title] || course.category;
+        const matchesProgram = tutorPrograms.includes(program);
+        const matchesTags = (course.tags || []).some(tag => tutorInterests.includes(tag));
+        
+        return matchesProgram || matchesTags;
+      });
+      
+      setCourses(filteredCourses);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
     } finally {
@@ -45,7 +103,22 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
 
   const selectedCourse = courses.find(c => c._id === formData.course);
   
-  const availableSubTopics = tutorSubTopics;
+  const getProgramForCourse = (courseTitle) => {
+    return courseTitleToProgram[courseTitle] || courseTitle;
+  };
+  
+  const selectedProgram = selectedCourse ? getProgramForCourse(selectedCourse.title) : null;
+  
+  // Get sub-topics the tutor is enrolled in for this program
+  const enrolledSubTopicsForProgram = tutorSubTopics.filter(st => {
+    const allProgramSubTopics = programSubTopics[selectedProgram] || [];
+    return allProgramSubTopics.includes(st);
+  });
+  
+  // Show only enrolled sub-topics if available, otherwise show all for the program
+  const availableSubTopics = enrolledSubTopicsForProgram.length > 0 
+    ? enrolledSubTopicsForProgram 
+    : (selectedProgram && programSubTopics[selectedProgram] ? programSubTopics[selectedProgram] : tutorSubTopics);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -175,16 +248,27 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none"
               disabled={loading}
             >
-              <option value="">Choose a course...</option>
-              {courses.map(course => (
-                <option key={course._id} value={course._id}>
-                  {course.title}
-                </option>
-              ))}
+              <option value="">Choose a program...</option>
+              {(() => {
+                const uniquePrograms = [];
+                const seen = new Set();
+                courses.forEach(course => {
+                  const program = courseTitleToProgram[course.title] || course.category || 'Other';
+                  if (!seen.has(program)) {
+                    seen.add(program);
+                    uniquePrograms.push({ program, courseId: course._id });
+                  }
+                });
+                return uniquePrograms.map(({ program, courseId }) => (
+                  <option key={program} value={courseId}>
+                    {programLabels[program] || program}
+                  </option>
+                ));
+              })()}
             </select>
             {courses.length === 0 && !loading && (
               <p className="mt-1 text-sm text-gray-500">
-                No courses match your interests. Create a course first.
+                You are not enrolled in any programs. Please enroll in a program first to create study sessions.
               </p>
             )}
           </div>

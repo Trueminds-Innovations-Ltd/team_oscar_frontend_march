@@ -3,6 +3,23 @@ import { formatCourseCountdown, isCourseAvailable } from '../../../shared/utils/
 import { useContext } from 'react';
 import LMSContext from '../../../contexts/LMSContext';
 
+const programTitles = {
+  "UI/UX": "UI/UX Design",
+  "Frontend": "Frontend Development",
+  "Modern React Development": "Frontend Development",
+  "Backend": "Backend Development",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product Management",
+  "Cloud Engineering": "Cloud Engineering",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
+};
+
+function getProgramTitle(title) {
+  if (!title) return 'Study Session';
+  return programTitles[title] || title;
+}
+
 function UrgentCourses() {
   const { studySessions, studySessionProgress, openStudySessionModal } = useCourses();
   const { user } = useContext(LMSContext);
@@ -72,7 +89,7 @@ function UrgentCourses() {
 
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
-                  {session.course?.title || 'Study Session'}
+                  {getProgramTitle(session.course?.title)}
                 </p>
                 <p className="truncate text-xs text-gray-500">
                   {session.subTopic} • {session.tutor?.name || 'Tutor'}

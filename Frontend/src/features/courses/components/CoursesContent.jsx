@@ -5,6 +5,24 @@ import CourseSection from "./CourseSection";
 import CoursesControlBar from "./CoursesControlBar";
 import LMSContext from '../../../contexts/LMSContext';
 import { useCourses } from '../../../contexts/CourseContext';
+import { formatTimeAgo } from '../../../shared/utils/dateUtils';
+
+const programTitles = {
+  "UI/UX": "UI/UX Design",
+  "Frontend": "Frontend Development",
+  "Modern React Development": "Frontend Development",
+  "Backend": "Backend Development",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product Management",
+  "Cloud Engineering": "Cloud Engineering",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
+};
+
+function getProgramTitle(title) {
+  if (!title) return 'Study Session';
+  return programTitles[title] || title;
+}
 
 function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
   const { token } = useContext(LMSContext);
@@ -68,6 +86,12 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
     return session.completedStudents || 0;
   };
 
+  const getLastVisited = (session) => {
+    const progress = studySessionProgress[session._id];
+    if (!progress) return null;
+    return progress.updatedAt || progress.createdAt;
+  };
+
   return (
     <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-265">
@@ -102,7 +126,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                 {activeSessions.map((session) => (
                   <CourseCard
                     key={session._id}
-                    title={session.course?.title || 'Study Session'}
+                    title={getProgramTitle(session.course?.title)}
                     completion={isTutor ? `${getStudentCount(session)} students completed` : getCompletion(getProgress(session))}
                     progress={isTutor ? 0 : getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
@@ -114,6 +138,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
                     onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    lastVisited={getLastVisited(session)}
                   />
                 ))}
               </div>
@@ -128,7 +153,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                 {upcomingSessions.map((session) => (
                   <CourseCard
                     key={session._id}
-                    title={session.course?.title || 'Study Session'}
+                    title={getProgramTitle(session.course?.title)}
                     completion={isTutor ? `${getStudentCount(session)} students completed` : getCompletion(getProgress(session))}
                     progress={isTutor ? 0 : getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
@@ -140,6 +165,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
                     onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    lastVisited={getLastVisited(session)}
                   />
                 ))}
               </div>
@@ -152,7 +178,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                 {inProgressSessions.map((session) => (
                   <CourseCard
                     key={session._id}
-                    title={session.course?.title || 'Study Session'}
+                    title={getProgramTitle(session.course?.title)}
                     completion={getCompletion(getProgress(session))}
                     progress={getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
@@ -164,6 +190,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
                     onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    lastVisited={getLastVisited(session)}
                   />
                 ))}
               </div>
@@ -176,7 +203,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                 {completedSessions.map((session) => (
                   <CourseCard
                     key={session._id}
-                    title={session.course?.title || 'Study Session'}
+                    title={getProgramTitle(session.course?.title)}
                     completion="Completed"
                     progress={100}
                     timeLeft={formatTimeLeft(session.startDate)}
@@ -188,6 +215,7 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
                     onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    lastVisited={getLastVisited(session)}
                   />
                 ))}
               </div>

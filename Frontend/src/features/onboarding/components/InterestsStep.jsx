@@ -1,4 +1,4 @@
-import { FaCheck, FaChartSimple, FaCode, FaDesktop, FaUserGroup } from "react-icons/fa6";
+import { FaCheck, FaChartSimple, FaCode, FaUserGroup, FaServer, FaCloud, FaNetworkWired, FaShieldHalved } from "react-icons/fa6";
 import StepActions from "./StepActions";
 import StepHeader from "./StepHeader";
 
@@ -7,7 +7,7 @@ const interests = [
     id: "ui-ux",
     title: "UI/UX Design",
     sub: "Wireframes, prototypes, user research, design systems.",
-    icon: <FaDesktop />,
+    icon: <FaCode />,
     iconBg: "#EFF6FF",
     iconColor: "#2563EB",
   },
@@ -18,6 +18,14 @@ const interests = [
     icon: <FaCode />,
     iconBg: "#F0FDF4",
     iconColor: "#10B981",
+  },
+  {
+    id: "backend",
+    title: "Backend Development",
+    sub: "Node.js, Python, Java, databases, and APIs.",
+    icon: <FaServer />,
+    iconBg: "#F5F3FF",
+    iconColor: "#7C3AED",
   },
   {
     id: "data",
@@ -34,6 +42,30 @@ const interests = [
     icon: <FaUserGroup />,
     iconBg: "#FDF2F8",
     iconColor: "#DB2777",
+  },
+  {
+    id: "cloud",
+    title: "Cloud Engineering",
+    sub: "AWS, Azure, Docker, Kubernetes, DevOps.",
+    icon: <FaCloud />,
+    iconBg: "#F0F9FF",
+    iconColor: "#0EA5E9",
+  },
+  {
+    id: "networking",
+    title: "Networking",
+    sub: "CCNA, network security, routing, firewalls.",
+    icon: <FaNetworkWired />,
+    iconBg: "#FEF2F2",
+    iconColor: "#DC2626",
+  },
+  {
+    id: "security",
+    title: "Cyber Security",
+    sub: "Penetration testing, ethical hacking, security+.",
+    icon: <FaShieldHalved />,
+    iconBg: "#ECFDF5",
+    iconColor: "#059669",
   },
 ];
 
@@ -53,6 +85,14 @@ const subTopicsByInterest = {
     { id: "vue", title: "Vue.js", desc: "Learn the progressive JavaScript framework" },
     { id: "nextjs", title: "Next.js", desc: "Build full-stack apps with React" },
   ],
+  "backend": [
+    { id: "nodejs", title: "Node.js", desc: "Build server-side applications with Node.js" },
+    { id: "python", title: "Python", desc: "Backend development with Python" },
+    { id: "java", title: "Java", desc: "Enterprise Java development" },
+    { id: "golang", title: "Go", desc: "Modern backend with Go" },
+    { id: "express", title: "Express.js", desc: "Build APIs with Express" },
+    { id: "database", title: "Database Design", desc: "Design and manage databases" },
+  ],
   "data": [
     { id: "python", title: "Python", desc: "Data analysis with Python and Pandas" },
     { id: "sql", title: "SQL", desc: "Query and analyze relational databases" },
@@ -66,6 +106,28 @@ const subTopicsByInterest = {
     { id: "user-interviews", title: "User Interviews", desc: "Conduct and analyze user interviews" },
     { id: "gtm", title: "Go-to-Market", desc: "Launch products successfully" },
     { id: "agile", title: "Agile/Scrum", desc: "Manage products with agile methodologies" },
+  ],
+  "cloud": [
+    { id: "aws", title: "AWS", desc: "Amazon Web Services" },
+    { id: "azure", title: "Azure", desc: "Microsoft Azure cloud" },
+    { id: "gcp", title: "Google Cloud", desc: "Google Cloud Platform" },
+    { id: "docker", title: "Docker", desc: "Containerization with Docker" },
+    { id: "kubernetes", title: "Kubernetes", desc: "Container orchestration" },
+    { id: "devops", title: "DevOps", desc: "DevOps practices and CI/CD" },
+  ],
+  "networking": [
+    { id: "ccna", title: "CCNA", desc: "Cisco Certified Network Associate" },
+    { id: "network-security", title: "Network Security", desc: "Secure network infrastructure" },
+    { id: "routing", title: "Routing & Switching", desc: "Network routing protocols" },
+    { id: "firewalls", title: "Firewalls", desc: "Configure and manage firewalls" },
+    { id: "voip", title: "VoIP", desc: "Voice over IP technologies" },
+  ],
+  "security": [
+    { id: "penetration", title: "Penetration Testing", desc: "Ethical penetration testing" },
+    { id: "ethical-hacking", title: "Ethical Hacking", desc: "White hat hacking techniques" },
+    { id: "network-security", title: "Network Security", desc: "Secure network infrastructure" },
+    { id: "security-plus", title: "Security+", desc: "CompTIA Security+ certification" },
+    { id: "cissp", title: "CISSP", desc: "Certified Information Systems Security Professional" },
   ],
 };
 
@@ -120,6 +182,8 @@ function InterestsStep({ selectedInterests, onToggleInterest, onBack, onNext }) 
             {selectedInterests.map((interestId) => {
               const interest = interests.find(i => i.id === interestId);
               const subTopics = getSubTopicsForInterest(interestId);
+              
+              if (!interest) return null;
               
               return (
                 <div key={interestId} className="w-full">

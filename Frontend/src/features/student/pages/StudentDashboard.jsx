@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import Sidebar from "../../../shared/layout/Sidebar";
 import NavBar from "../../../shared/layout/NavBar";
 import SummaryCard from "../../../shared/ui/SummaryCard";
@@ -15,7 +15,7 @@ import StudySessionModal from "../../../shared/components/StudySessionModal";
 function StudentDashboardContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useContext(LMSContext);
-  const { readingModal, updateProgress, closeReadingModal, studySessionModal, closeStudySessionModal } = useCourses();
+  const { readingModal, updateProgress, closeReadingModal, studySessionModal, closeStudySessionModal, enrolledCourses, studySessions, studySessionProgress } = useCourses();
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
@@ -23,6 +23,45 @@ function StudentDashboardContent() {
       document.body.style.overflow = "";
     };
   }, [isSidebarOpen]);
+
+  const dashboardStats = useMemo(() => {
+    const totalCourses = enrolledCourses.length;
+    const completedCourses = enrolledCourses.filter(c => c.progress >= 100).length;
+    
+    const totalStudySessions = studySessions.length;
+    const completedStudySessions = studySessions.filter(session => {
+      const progress = studySessionProgress[session._id];
+      return progress && progress.progress >= 100;
+    }).length;
+    
+    const inProgressStudySessions = studySessions.filter(session => {
+      const progress = studySessionProgress[session._id];
+      return progress && progress.progress > 0 && progress.progress < 100;
+    }).length;
+    
+    let overallProgress = 0;
+    if (totalCourses > 0) {
+      const totalProgress = enrolledCourses.reduce((sum, c) => sum + (c.progress || 0), 0);
+      overallProgress = Math.round(totalProgress / totalCourses);
+    }
+    
+    if (inProgressStudySessions > 0 || completedStudySessions > 0) {
+      const sessionCount = studySessions.length;
+      const sessionProgress = studySessions.reduce((sum, session) => {
+        const progress = studySessionProgress[session._id];
+        return sum + (progress?.progress || 0);
+      }, 0);
+      const sessionAvg = sessionCount > 0 ? Math.round(sessionProgress / sessionCount) : 0;
+      overallProgress = Math.max(overallProgress, sessionAvg);
+    }
+
+    return {
+      progress: overallProgress,
+      courses: totalCourses,
+      completedStudy: completedStudySessions,
+      totalStudy: totalStudySessions
+    };
+  }, [enrolledCourses, studySessions, studySessionProgress]);
 
   return (
     <>
@@ -59,7 +98,7 @@ function StudentDashboardContent() {
 
                   <div>
                     <p className="font-medium">Progress</p>
-                    <p className="font-medium">10% Complete</p>
+                    <p className="font-medium">{dashboardStats.progress}% Complete</p>
                   </div>
                 </SummaryCard>
 
@@ -70,7 +109,7 @@ function StudentDashboardContent() {
 
                   <div>
                     <p className="font-medium">Courses</p>
-                    <p className="font-medium">5</p>
+                    <p className="font-medium">{dashboardStats.courses}</p>
                   </div>
                 </SummaryCard>
 
@@ -80,8 +119,8 @@ function StudentDashboardContent() {
                   </svg>
 
                   <div className="min-w-0">
-                    <p className="truncate font-medium">Completed Courses</p>
-                    <p className="font-medium">2/5</p>
+                    <p className="truncate font-medium">Completed Study</p>
+                    <p className="font-medium">{dashboardStats.completedStudy}/{dashboardStats.totalStudy}</p>
                   </div>
                 </SummaryCard>
               </DashboardMetrics>

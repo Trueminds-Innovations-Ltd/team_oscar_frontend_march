@@ -1,5 +1,23 @@
 import { useCourses } from '../../../contexts/CourseContext';
 import { useNavigate } from "react-router-dom";
+import { formatTimeAgo } from '../../../shared/utils/dateUtils';
+
+const programTitles = {
+  "UI/UX": "UI/UX Design",
+  "Frontend": "Frontend Development",
+  "Modern React Development": "Frontend Development",
+  "Backend": "Backend Development",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product Management",
+  "Cloud Engineering": "Cloud Engineering",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
+};
+
+function getProgramTitle(title) {
+  if (!title) return 'Study Session';
+  return programTitles[title] || title;
+}
 
 function LearningModuleCard() {
   const { getLatestIncomplete, openStudySessionModal, studySessions, studySessionProgress } = useCourses();
@@ -37,7 +55,7 @@ function LearningModuleCard() {
   return (
     <section className="w-full rounded-lg border border-gray-300 p-4 flex flex-col gap-4 lg:flex-row">
       <section className="h-[180px] w-full rounded-lg bg-black sm:h-[220px] lg:h-[200px] lg:max-w-[500px] flex items-center justify-center">
-        <p className="text-white/50 text-sm">{latestSession.course?.title || 'Study Session'}</p>
+        <p className="text-white/50 text-sm">{getProgramTitle(latestSession.course?.title)}</p>
       </section>
 
       <section className="w-full leading-7 sm:leading-8 min-w-0">
@@ -45,7 +63,7 @@ function LearningModuleCard() {
           Study Session: {latestSession.subTopic}
         </p>
 
-        <p className="font-medium break-words">{latestSession.course?.title || 'Study Session'}</p>
+        <p className="font-medium break-words">{getProgramTitle(latestSession.course?.title)}</p>
         <p className="font-medium break-words">
           Tutor: {latestSession.tutor?.name || 'Tutor'}
         </p>
@@ -57,9 +75,16 @@ function LearningModuleCard() {
               style={{ width: `${progressValue}%` }}
             />
           </div>
-          <p className="text-md font-medium text-blue-900 mt-1">
-            {progressValue}% complete
-          </p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-md font-medium text-blue-900">
+              {progressValue}% complete
+            </p>
+            {latestProgress?.updatedAt && (
+              <p className="text-xs text-gray-500">
+                {formatTimeAgo(latestProgress.updatedAt)}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">

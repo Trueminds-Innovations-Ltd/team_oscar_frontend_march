@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCourses } from "../../../contexts/CourseContext";
 
-const tabs = [
+const tabs = (isTutor) => [
   { id: "personalInformation", label: "Personal Information" },
-  { id: "learningPreferences", label: "Learning preferences" },
-  { id: "achievements", label: "Achievements" },
+  { id: "learningPreferences", label: "Learning Preferences" },
+  ...(isTutor ? [] : [{ id: "achievements", label: "Achievements" }]),
 ];
 
 const AchievementCard = ({ item }) => {
@@ -91,7 +92,22 @@ const InfoGrid = ({ items }) => (
   </div>
 );
 
-const ProfileTabsCard = ({ sections, showEditButton = false }) => {
+const EnrolledCoursesCard = ({ course }) => (
+  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <p className="text-sm font-medium text-slate-500">Program</p>
+    <p className="mt-2 text-lg font-semibold text-slate-900">{course.program}</p>
+    <div className="mt-2 flex flex-wrap gap-2">
+      {course.subTopics.map((subTopic, idx) => (
+        <span key={idx} className="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full">
+          {subTopic}
+        </span>
+      ))}
+    </div>
+    <p className="mt-2 text-xs text-slate-500">{course.value}</p>
+  </div>
+);
+
+const ProfileTabsCard = ({ sections, showEditButton = false, isTutor = false }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("personalInformation");
 
@@ -99,7 +115,7 @@ const ProfileTabsCard = ({ sections, showEditButton = false }) => {
     <section className="overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.06)] ring-1 ring-slate-200/80">
       <div className="border-b border-slate-200 px-4 sm:px-8">
         <div className="flex flex-wrap gap-4 sm:gap-8">
-          {tabs.map((tab) => {
+          {tabs(isTutor).map((tab) => {
             const isActive = tab.id === activeTab;
             return (
               <button
@@ -121,16 +137,41 @@ const ProfileTabsCard = ({ sections, showEditButton = false }) => {
 
       <div className="px-4 py-6 sm:px-8 sm:py-8">
         {activeTab === "achievements" ? (
-          <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-            {sections.achievements.map((item) => (
-              <AchievementCard key={item.id} item={item} />
-            ))}
+          sections.achievements && sections.achievements.length > 0 ? (
+            <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+              {sections.achievements.map((item) => (
+                <AchievementCard key={item.id} item={item} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 py-4">No achievements yet. Complete study sessions to earn achievements!</p>
+          )
+        ) : activeTab === "learningPreferences" ? (
+          <div>
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {sections.learningPreferences && sections.learningPreferences.map((course, index) => (
+                <EnrolledCoursesCard key={index} course={course} />
+              ))}
+              {(!sections.learningPreferences || sections.learningPreferences.length === 0) && (
+                <p className="text-gray-500 py-4">No courses enrolled yet.</p>
+              )}
+            </div>
+            
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate("/onboarding")}
+                className="inline-flex items-center justify-center rounded-full bg-primary-color px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-900"
+              >
+                + Add More Courses
+              </button>
+            </div>
           </div>
         ) : (
           <InfoGrid items={sections[activeTab]} />
         )}
 
-        {showEditButton ? (
+        {showEditButton && activeTab === "personalInformation" ? (
           <div className="mt-8 flex justify-end">
             <button
               type="button"

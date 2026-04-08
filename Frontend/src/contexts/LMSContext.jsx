@@ -43,8 +43,8 @@ function LMSProvider({ children }) {
     return { ...response, user: userData };
   };
 
-  const signup = async (name, email, password, role) => {
-    const response = await api.post('/auth/signup', { name, email, password, role });
+  const signup = async (name, email, password, role, userData = {}) => {
+    const response = await api.post('/auth/signup', { name, email, password, role, ...userData });
     return response.data;
   };
 

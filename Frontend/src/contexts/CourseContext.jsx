@@ -51,6 +51,8 @@ export function CourseProvider({ children }) {
       
       if (response.data && response.data.sessions) {
         setStudySessions(response.data.sessions);
+      } else {
+        setStudySessions([]);
       }
       
       try {

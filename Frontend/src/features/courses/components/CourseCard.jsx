@@ -1,5 +1,6 @@
 import { FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { formatTimeAgo } from '../../../shared/utils/dateUtils';
 
 function CourseCard({
   title,
@@ -15,6 +16,7 @@ function CourseCard({
   linkUrl,
   sessionId,
   onCardClick,
+  lastVisited,
 }) {
   const navigate = useNavigate();
   
@@ -80,7 +82,7 @@ function CourseCard({
           ) : (
             <p className="flex items-center gap-1 text-[8px] font-medium text-[#667085]">
               <span className="inline-block h-1.25 w-1.25 rounded-full bg-[#20bf55]" />
-              last visited 2h ago
+              {lastVisited && progress > 0 ? `opened ${formatTimeAgo(lastVisited)}` : 'Not started'}
             </p>
           )}
 

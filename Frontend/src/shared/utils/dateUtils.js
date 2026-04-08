@@ -10,9 +10,10 @@ export function formatTimeAgo(date) {
   const diffDays = Math.floor(diffHours / 24);
   const diffWeeks = Math.floor(diffDays / 7);
   const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
 
   if (diffSeconds < 60) {
-    return 'Just now';
+    return `${diffSeconds}s ago`;
   }
 
   if (diffMinutes < 60) {
@@ -32,10 +33,10 @@ export function formatTimeAgo(date) {
   }
 
   if (diffMonths < 12) {
-    return `${diffMonths}mo ago`;
+    return `${diffMonths}month${diffMonths > 1 ? 's' : ''} ago`;
   }
 
-  return formatDate(date);
+  return `${diffYears}y ago`;
 }
 
 export function formatDate(date) {

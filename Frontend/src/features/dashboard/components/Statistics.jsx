@@ -1,6 +1,23 @@
 import { useCourses } from '../../../contexts/CourseContext';
 import { formatTimeAgo } from '../../../shared/utils/dateUtils';
 
+const programTitles = {
+  "UI/UX": "UI/UX Design",
+  "Frontend": "Frontend Development",
+  "Modern React Development": "Frontend Development",
+  "Backend": "Backend Development",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product Management",
+  "Cloud Engineering": "Cloud Engineering",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
+};
+
+function getProgramTitle(title) {
+  if (!title) return 'Study Session';
+  return programTitles[title] || title;
+}
+
 function Statistics() {
   const { inProgressCourses, studySessions, studySessionProgress } = useCourses();
 
@@ -58,7 +75,7 @@ function Statistics() {
 
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">
-                      {session.course?.title || 'Study Session'}
+                      {getProgramTitle(session.course?.title)}
                     </p>
                     <p className="truncate text-xs text-gray-500">{session.subTopic}</p>
                     
@@ -79,7 +96,9 @@ function Statistics() {
                   </div>
 
                   <div className="flex-shrink-0 text-right">
-                    <p className="text-xs text-gray-500">Study Session</p>
+                    <p className="text-xs text-gray-500">
+                      {progress?.updatedAt ? formatTimeAgo(progress.updatedAt) : 'Not started'}
+                    </p>
                   </div>
                 </div>
               );

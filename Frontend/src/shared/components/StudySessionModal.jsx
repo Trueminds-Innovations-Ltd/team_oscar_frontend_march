@@ -2,6 +2,23 @@ import { useState, useEffect, useRef } from 'react';
 import { IoClose } from 'react-icons/io5';
 import api from '../api';
 
+const programTitles = {
+  "UI/UX": "UI/UX Design",
+  "Frontend": "Frontend Development",
+  "Modern React Development": "Frontend Development",
+  "Backend": "Backend Development",
+  "Data Analysis": "Data Analysis",
+  "Product Management": "Product Management",
+  "Cloud Engineering": "Cloud Engineering",
+  "Networking": "Networking",
+  "Cyber Security": "Cyber Security"
+};
+
+function getProgramTitle(title) {
+  if (!title) return 'Study Session';
+  return programTitles[title] || title;
+}
+
 function StudySessionModal({ session, onClose }) {
   const [progress, setProgress] = useState(0);
   const [lastPosition, setLastPosition] = useState(0);
@@ -109,7 +126,7 @@ function StudySessionModal({ session, onClose }) {
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
           <div className="min-w-0 flex-1">
             <h2 className="text-lg font-bold text-gray-900 truncate pr-4">
-              {session.course?.title || 'Study Session'}
+              {getProgramTitle(session.course?.title)}
             </h2>
             <p className="text-sm text-gray-500">{session.subTopic} • {session.tutor?.name}</p>
           </div>

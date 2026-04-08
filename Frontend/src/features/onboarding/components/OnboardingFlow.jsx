@@ -17,8 +17,12 @@ const totalSteps = 4;
 const interestMap = {
   "ui-ux": "UI/UX",
   "frontend": "Frontend",
+  "backend": "Backend",
   "data": "Data Analysis",
-  "product": "Product Management"
+  "product": "Product Management",
+  "cloud": "Cloud Engineering",
+  "networking": "Networking",
+  "security": "Cyber Security"
 };
 
 // Map sub-topic IDs to readable names
@@ -36,8 +40,14 @@ const subTopicMap = {
   "css": "CSS",
   "vue": "Vue.js",
   "nextjs": "Next.js",
-  // Data sub-topics
+  // Backend sub-topics
+  "nodejs": "Node.js",
   "python": "Python",
+  "java": "Java",
+  "golang": "Go",
+  "express": "Express.js",
+  "database": "Database Design",
+  // Data sub-topics
   "sql": "SQL",
   "excel": "Excel",
   "visualization": "Data Visualization",
@@ -47,7 +57,25 @@ const subTopicMap = {
   "okrs": "OKRs",
   "user-interviews": "User Interviews",
   "gtm": "Go-to-Market",
-  "agile": "Agile/Scrum"
+  "agile": "Agile/Scrum",
+  // Cloud sub-topics
+  "aws": "AWS",
+  "azure": "Azure",
+  "gcp": "Google Cloud",
+  "docker": "Docker",
+  "kubernetes": "Kubernetes",
+  "devops": "DevOps",
+  // Networking sub-topics
+  "ccna": "CCNA",
+  "network-security": "Network Security",
+  "routing": "Routing & Switching",
+  "firewalls": "Firewalls",
+  "voip": "VoIP",
+  // Security sub-topics
+  "penetration": "Penetration Testing",
+  "ethical-hacking": "Ethical Hacking",
+  "security-plus": "Security+",
+  "cissp": "CISSP",
 };
 
 // Map frontend level to backend values
@@ -66,6 +94,42 @@ function OnboardingFlow() {
   const [toast, setToast] = useState({ show: false, message: "" });
   const [confetti, setConfetti] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Check if user is already enrolled (has existing interests/subTopics) - means they came from profile
+  const isReturningUser = user?.interests?.length > 0 || user?.subTopics?.length > 0;
+
+  // Pre-select existing user interests/subTopics on mount
+  useEffect(() => {
+    if (user?.interests?.length > 0 || user?.subTopics?.length > 0) {
+      const existingSelections = [];
+      
+      // Map backend interests to frontend IDs
+      const reverseInterestMap = Object.entries(interestMap).reduce((acc, [key, value]) => {
+        acc[value] = key;
+        return acc;
+      }, {});
+      
+      // Add main interests
+      user.interests.forEach(interest => {
+        const frontendId = reverseInterestMap[interest];
+        if (frontendId) {
+          existingSelections.push(frontendId);
+        }
+      });
+      
+      // Add sub-topics
+      user.subTopics?.forEach(subTopic => {
+        const reverseSubTopicMap = Object.entries(subTopicMap).find(([key, value]) => value === subTopic);
+        if (reverseSubTopicMap) {
+          existingSelections.push(reverseSubTopicMap[0]);
+        }
+      });
+      
+      if (existingSelections.length > 0) {
+        setSelectedInterests(existingSelections);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!toast.show) return undefined;
@@ -187,7 +251,11 @@ function OnboardingFlow() {
       <BackgroundDecor />
 
       <div className="app">
-        <OnboardingTopbar onSkip={() => handleFinish()} />
+        <OnboardingTopbar 
+          onSkip={() => handleFinish()} 
+          showBackToProfile={isReturningUser}
+          onBackToProfile={() => navigate("/profile")}
+        />
         <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
 
         <div className="card">
