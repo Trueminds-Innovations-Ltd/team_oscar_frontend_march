@@ -5,6 +5,210 @@ export const messageFolders = [
   { id: "support-ticket", label: "Support Tickets", icon: "ticket" },
 ];
 
+export const inboxTabs = [
+  { id: "direct", label: "Direct messages" },
+  { id: "system", label: "System Messages" },
+];
+
+export const inboxThreads = [
+  {
+    id: "john-smith",
+    tab: "direct",
+    name: "John Smith",
+    subtitle: "Do And Check The File",
+    time: "2 mins ago",
+    avatar: "JS",
+    avatarTone: "from-zinc-900 to-zinc-700",
+    unread: true,
+    role: "Tutor",
+    messages: [
+      {
+        id: "m1",
+        side: "left",
+        tone: "mint",
+        size: "lg",
+        text: "Please review the latest draft before 4 PM.",
+      },
+      {
+        id: "m2",
+        side: "right",
+        tone: "indigo",
+        size: "md",
+        text: "Sure, I will check and send comments.",
+      },
+      {
+        id: "m3",
+        side: "left",
+        tone: "mint",
+        size: "sm",
+        text: "Perfect, thanks.",
+      },
+    ],
+  },
+  {
+    id: "tylor-james",
+    tab: "direct",
+    name: "Tylor James",
+    subtitle: "Thank You Maam.",
+    time: "10:15 AM",
+    avatar: "TJ",
+    avatarTone: "from-amber-700 to-orange-500",
+    delivered: true,
+    role: "Tutor",
+    messages: [
+      {
+        id: "m1",
+        side: "left",
+        tone: "mint",
+        size: "xl",
+        text: "I have updated the assignment with your requested examples.",
+      },
+      {
+        id: "m2",
+        side: "left",
+        tone: "mint",
+        size: "sm",
+        text: "Please check section two as well.",
+      },
+      {
+        id: "m3",
+        side: "right",
+        tone: "indigo",
+        size: "lg",
+        text: "Looks much better now.",
+      },
+      {
+        id: "m4",
+        side: "right",
+        tone: "indigo",
+        size: "xl",
+        text: "Keep this same structure for the next submission too.",
+        overlay: true,
+      },
+      {
+        id: "m5",
+        side: "left",
+        tone: "mint",
+        size: "lg",
+        text: "Thank you Maam.",
+      },
+      {
+        id: "m6",
+        side: "right",
+        tone: "indigo",
+        size: "lg",
+        text: "You are welcome.",
+      },
+    ],
+  },
+  {
+    id: "daniel-cold",
+    tab: "direct",
+    name: "Daniel Cold",
+    subtitle: "oscarbob@gmail.com",
+    time: "9:45 AM",
+    avatar: "DC",
+    avatarTone: "from-orange-700 to-yellow-500",
+    unread: true,
+    role: "Mentor",
+    messages: [
+      {
+        id: "m1",
+        side: "left",
+        tone: "mint",
+        size: "md",
+        text: "Sent you my issue screenshot by email.",
+      },
+      {
+        id: "m2",
+        side: "right",
+        tone: "indigo",
+        size: "md",
+        text: "Received. I will update you shortly.",
+      },
+    ],
+  },
+  {
+    id: "announcement-weekly",
+    tab: "system",
+    name: "Weekly Digest",
+    subtitle: "3 new resources available",
+    time: "8:00 AM",
+    avatar: "WD",
+    avatarTone: "from-cyan-700 to-teal-500",
+    role: "System",
+    messages: [
+      {
+        id: "m1",
+        side: "left",
+        tone: "mint",
+        size: "lg",
+        text: "New frontend templates were added to your course workspace.",
+      },
+      {
+        id: "m2",
+        side: "left",
+        tone: "mint",
+        size: "md",
+        text: "You can find them under Materials > Week 4.",
+      },
+    ],
+  },
+];
+
+export const flowAiThread = {
+  id: "flow-ai-assistant",
+  name: "Flow Ai",
+  role: "AI Assistant",
+  avatar: "AI",
+  avatarTone: "from-[#2f4ba8] to-[#7b92dd]",
+  messages: [
+    {
+      id: "m1",
+      side: "left",
+      tone: "mint",
+      size: "xl",
+      text: "I reviewed your study plan. Do you want a 4-day revision schedule or a full 7-day plan?",
+    },
+    {
+      id: "m2",
+      side: "left",
+      tone: "mint",
+      size: "md",
+      text: "I can also generate quick practice questions.",
+    },
+    {
+      id: "m3",
+      side: "right",
+      tone: "indigo",
+      size: "lg",
+      text: "Create a 4-day revision plan and include quiz checkpoints.",
+    },
+    {
+      id: "m4",
+      side: "right",
+      tone: "indigo",
+      size: "xl",
+      text: "Sure. I will split each day into concepts, exercises, and a mini-test.",
+      overlay: true,
+    },
+    {
+      id: "m5",
+      side: "left",
+      tone: "mint",
+      size: "lg",
+      text: "Great. Should I optimize it for 90 minutes or 2 hours per day?",
+    },
+    {
+      id: "m6",
+      side: "right",
+      tone: "indigo",
+      size: "lg",
+      text: "Use 90 minutes per day.",
+    },
+  ],
+};
+
 export const tutorChats = [
   {
     id: "john-smith",

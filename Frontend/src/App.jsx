@@ -13,7 +13,7 @@ import Courses from "./features/courses/pages/Courses";
 import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
 import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
 import EditProfilePage from "./features/profile/components/EditProfilePage";
-import MessagesPage from "./features/messages-2/pages/MessagesPage";
+import MessagesPage from "./features/messages/pages/MessagesPage";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 
 function ProtectedRoute({ children }) {
@@ -94,7 +94,7 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/message-page" element={<MessagesPage />} />
+          <Route path="/message" element={<MessagesPage />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/profile" element={<ProfileOverviewPage />} />
 
