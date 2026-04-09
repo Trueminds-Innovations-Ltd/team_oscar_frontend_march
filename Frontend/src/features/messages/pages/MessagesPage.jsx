@@ -8,8 +8,6 @@ import {
   flowAiThread,
   inboxTabs,
   messageFolders,
-  supportTickets,
-  tutorChats,
 } from "../data/messagesData";
 
 const formatRelativeTime = (date) => {
@@ -35,11 +33,10 @@ const MessagesPage = () => {
   const [activeFolder, setActiveFolder] = useState("inbox");
   const [activeTab, setActiveTab] = useState("direct");
   const [activeInboxId, setActiveInboxId] = useState(null);
-  const [activeTutorChatId, setActiveTutorChatId] = useState("tylor-james");
-  const [activeSupportTicketId, setActiveSupportTicketId] = useState("quiz-scoring");
   
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
+  const [aiConversations, setAiConversations] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -49,6 +46,8 @@ const MessagesPage = () => {
         fetchConversations();
       }, 5000);
       return () => clearInterval(interval);
+    } else if (activeFolder === 'flow-ai') {
+      fetchAIConversations();
     }
   }, [activeFolder, activeTab]);
 
@@ -77,38 +76,33 @@ const MessagesPage = () => {
     }
   };
 
+  const fetchAIConversations = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get('/ai-conversations', token);
+      const data = response.data?.conversations || [];
+      setAiConversations(data);
+    } catch (error) {
+      console.error('Error fetching AI conversations:', error);
+    }
+  };
+
   const visibleInboxThreads = useMemo(
     () => conversations.filter((thread) => thread.tab === activeTab || !thread.tab),
     [activeTab, conversations],
   );
 
   const activeInboxThread = useMemo(() => {
-    if (!activeInboxId) return visibleInboxThreads[0] || null;
+    if (!activeInboxId && !selectedConversation) return null;
+    if (selectedConversation) return selectedConversation;
     const currentThread = conversations.find((thread) => thread.id === activeInboxId);
-    return currentThread || visibleInboxThreads[0] || null;
-  }, [activeInboxId, activeTab, visibleInboxThreads, conversations]);
-
-  const activeTutorChat = useMemo(
-    () =>
-      tutorChats.find((chat) => chat.id === activeTutorChatId) || tutorChats[0],
-    [activeTutorChatId],
-  );
-
-  const activeSupportTicket = useMemo(
-    () =>
-      supportTickets.find((ticket) => ticket.id === activeSupportTicketId) ||
-      supportTickets[0],
-    [activeSupportTicketId],
-  );
+    return currentThread || null;
+  }, [activeInboxId, activeTab, visibleInboxThreads, conversations, selectedConversation]);
 
   const currentVariant =
     activeFolder === "inbox"
       ? "inbox"
-      : activeFolder === "flow-ai"
-        ? "flow-ai"
-        : activeFolder === "support-ticket"
-          ? "tickets"
-          : "tutor";
+      : "flow-ai";
 
   const handleConversationSelect = async (convId) => {
     setActiveInboxId(convId);
@@ -130,10 +124,29 @@ const MessagesPage = () => {
         messages: []
       };
     }
-    if (currentVariant === "flow-ai") return flowAiThread;
-    if (currentVariant === "tickets") return activeSupportTicket;
-    return activeTutorChat;
-  }, [currentVariant, selectedConversation, activeInboxThread, activeSupportTicket, activeTutorChat]);
+    
+    if (currentVariant === "flow-ai") {
+      if (aiConversations.length > 0) {
+        return {
+          id: aiConversations[0].id,
+          name: 'Flow Ai',
+          avatar: 'AI',
+          avatarTone: 'from-[#2f4ba8] to-[#7b92dd]',
+          subtitle: 'AI Assistant',
+          preview: aiConversations[0].preview,
+          time: aiConversations[0].time,
+          unread: false,
+          messages: aiConversations[0].messages || []
+        };
+      }
+      return {
+        ...flowAiThread,
+        messages: []
+      };
+    }
+    
+    return flowAiThread;
+  }, [currentVariant, selectedConversation, activeInboxThread, aiConversations]);
 
   const inboxItems = conversations.map(conv => ({
     id: conv.id,
@@ -175,29 +188,6 @@ const MessagesPage = () => {
               items={inboxItems}
               activeItemId={activeInboxId || activeInboxThread?.id}
               onSelect={handleConversationSelect}
-            />
-          ) : null}
-
-          {currentVariant === "tutor" || currentVariant === "tickets" ? (
-            <MessageListPanel
-              title={
-                currentVariant === "tickets" ? "Support Tickets" : "Tutor Chat"
-              }
-              buttonLabel={
-                currentVariant === "tickets" ? "Create Ticket" : "Request Tutor"
-              }
-              variant={currentVariant}
-              items={currentVariant === "tickets" ? supportTickets : tutorChats}
-              activeItemId={
-                currentVariant === "tickets"
-                  ? activeSupportTicketId
-                  : activeTutorChatId
-              }
-              onSelect={
-                currentVariant === "tickets"
-                  ? setActiveSupportTicketId
-                  : setActiveTutorChatId
-              }
             />
           ) : null}
 

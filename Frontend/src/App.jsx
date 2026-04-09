@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useContext } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
 import { LMSProvider } from "./contexts/LMSContext";
 import { CourseProvider } from "./contexts/CourseContext";
 import LMSContext from "./contexts/LMSContext";
@@ -14,6 +14,55 @@ import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
 import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
 import EditProfilePage from "./features/profile/components/EditProfilePage";
 import MessagesPage from "./features/messages/pages/MessagesPage";
+
+function EmailConfirm() {
+  const { token } = useParams();
+  const [status, setStatus] = useState('loading');
+  const [errorMsg, setErrorMsg] = useState('');
+  
+  useEffect(() => {
+    console.log('Confirming token:', token);
+    fetch(`http://localhost:3000/api/auth/confirm/${token}`)
+      .then(res => {
+        console.log('Response status:', res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+          setStatus('success');
+        } else {
+          setStatus('error');
+          setErrorMsg(data.message || 'Unknown error');
+        }
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        setStatus('error');
+        setErrorMsg(err.message);
+      });
+  }, [token]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      {status === 'loading' && <p>Confirming your email...</p>}
+      {status === 'success' && (
+        <div className="text-center">
+          <h2>Email Confirmed!</h2>
+          <p>You can now login to your account.</p>
+          <a href="/" className="text-blue-500 underline">Go to Login</a>
+        </div>
+      )}
+      {status === 'error' && (
+        <div className="text-center">
+          <h2>Confirmation Failed</h2>
+          <p>{errorMsg || 'The confirmation link is invalid or expired.'}</p>
+          <a href="/" className="text-blue-500 underline">Go to Login</a>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -97,6 +146,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/auth/confirm/:token" element={<EmailConfirm />} />
           <Route path="/onboarding" element={<Onboarding />} />
           
           <Route
