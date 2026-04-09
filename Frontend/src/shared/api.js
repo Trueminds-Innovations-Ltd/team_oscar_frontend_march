@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://team-oscar-backend-march.onrender.com/api';
 
 export const api = {
   async post(endpoint, data, token = null) {

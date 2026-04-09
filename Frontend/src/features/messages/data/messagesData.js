@@ -1,8 +1,6 @@
 export const messageFolders = [
   { id: "inbox", label: "Inbox", icon: "mail" },
   { id: "flow-ai", label: "Flow Ai", icon: "spark" },
-  { id: "tutor-chat", label: "Tutor Chat", icon: "cap" },
-  { id: "support-ticket", label: "Support Tickets", icon: "ticket" },
 ];
 
 export const inboxTabs = [
