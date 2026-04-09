@@ -46,8 +46,15 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState("");
+  
+  // Conversation states
+  const [conversationState, setConversationState] = useState(null);
+  const [pendingProgramSelection, setPendingProgramSelection] = useState(false);
+  const [pendingSubTopicSelection, setPendingSubTopicSelection] = useState(false);
   const [pendingTutorSelection, setPendingTutorSelection] = useState(false);
+  const [pendingQuestion, setPendingQuestion] = useState(false);
   const [lastTutorMatchMessage, setLastTutorMatchMessage] = useState(null);
+
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
@@ -75,9 +82,230 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
     }
   };
 
+  const handleProgramSelection = async (programIndex) => {
+    setIsTyping(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post('/ai/select-program', {
+        programIndex,
+        message: lastTutorMatchMessage
+      }, token);
+
+      if (!response.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      const data = response.data;
+      
+      setMessages(prev => [...prev, {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: input,
+        timestamp: new Date()
+      }, {
+        id: `ai-${Date.now()}`,
+        role: "ai",
+        content: data.reply,
+        needsTutorSelection: data.needsTutorSelection,
+        needsSubTopicSelection: data.needsSubTopicSelection,
+        timestamp: new Date()
+      }]);
+
+      if (data.needsTutorSelection && data.conversationState) {
+        setPendingTutorSelection(true);
+        setConversationState(data.conversationState);
+      } else if (data.needsSubTopicSelection && data.conversationState) {
+        setPendingSubTopicSelection(true);
+        setConversationState(data.conversationState);
+      } else {
+        setPendingProgramSelection(false);
+        setConversationState(null);
+      }
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        id: `error-${Date.now()}`,
+        role: "ai",
+        content: err.response?.data?.message || "Sorry, I couldn't process that. Please try again.",
+        timestamp: new Date(),
+        isError: true
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleSubTopicSelection = async (subTopicIndex) => {
+    setIsTyping(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post('/ai/select-subtopic', {
+        subTopicIndex,
+        conversationState,
+        message: lastTutorMatchMessage
+      }, token);
+
+      if (!response.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      const data = response.data;
+      
+      setMessages(prev => [...prev, {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: input,
+        timestamp: new Date()
+      }, {
+        id: `ai-${Date.now()}`,
+        role: "ai",
+        content: data.reply,
+        needsTutorSelection: data.needsTutorSelection,
+        needsSubTopicSelection: data.needsSubTopicSelection,
+        timestamp: new Date()
+      }]);
+
+      if (data.needsTutorSelection && data.conversationState) {
+        setPendingTutorSelection(true);
+        setPendingSubTopicSelection(false);
+        setConversationState(data.conversationState);
+      } else {
+        setPendingSubTopicSelection(false);
+        setConversationState(null);
+      }
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        id: `error-${Date.now()}`,
+        role: "ai",
+        content: err.response?.data?.message || "Sorry, I couldn't process that. Please try again.",
+        timestamp: new Date(),
+        isError: true
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleTutorSelection = async (tutorNumber) => {
+    setIsTyping(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post('/ai/select-tutor', {
+        tutorIndex: tutorNumber,
+        originalMessage: lastTutorMatchMessage || '',
+        conversationState
+      }, token);
+
+      if (!response.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      const data = response.data;
+      
+      setMessages(prev => [...prev, {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: input,
+        timestamp: new Date()
+      }, {
+        id: `ai-${Date.now()}`,
+        role: "ai",
+        content: data.message,
+        timestamp: new Date()
+      }]);
+
+      setPendingTutorSelection(false);
+      setConversationState(null);
+      onNewMessage?.();
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        id: `error-${Date.now()}`,
+        role: "ai",
+        content: err.response?.data?.message || "Sorry, I couldn't connect to that tutor. Please try again.",
+        timestamp: new Date(),
+        isError: true
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleQuestionSubmit = async (question) => {
+    setIsTyping(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post('/ai/submit-question', {
+        question,
+        conversationState
+      }, token);
+
+      if (!response.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      const data = response.data;
+      
+      setMessages(prev => [...prev, {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: input,
+        timestamp: new Date()
+      }, {
+        id: `ai-${Date.now()}`,
+        role: "ai",
+        content: data.reply,
+        needsTutorSelection: data.needsTutorSelection,
+        timestamp: new Date()
+      }]);
+
+      if (data.needsTutorSelection && data.conversationState) {
+        setConversationState(data.conversationState);
+        setPendingQuestion(false);
+        setPendingTutorSelection(true);
+      } else {
+        setPendingQuestion(false);
+        setConversationState(null);
+        onNewMessage?.();
+      }
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        id: `error-${Date.now()}`,
+        role: "ai",
+        content: err.response?.data?.message || "Sorry, I couldn't process your question. Please try again.",
+        timestamp: new Date(),
+        isError: true
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   const sendMessage = async (e) => {
     e?.preventDefault();
     if (!input.trim() || isTyping) return;
+
+    if (pendingProgramSelection) {
+      const programNum = parseInt(input.trim());
+      if (isNaN(programNum) || programNum < 1) {
+        setError("Please enter a valid number");
+        return;
+      }
+      setError("");
+      setInput("");
+      await handleProgramSelection(programNum);
+      return;
+    }
+
+    if (pendingSubTopicSelection) {
+      const subTopicNum = parseInt(input.trim());
+      if (isNaN(subTopicNum) || subTopicNum < 1) {
+        setError("Please enter a valid number");
+        return;
+      }
+      setError("");
+      setInput("");
+      await handleSubTopicSelection(subTopicNum);
+      return;
+    }
 
     if (pendingTutorSelection) {
       const tutorNumber = parseInt(input.trim());
@@ -85,53 +313,23 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
         setError("Please enter a valid number");
         return;
       }
-
       setError("");
-      setIsTyping(true);
-      const currentInput = input;
       setInput("");
+      setLastTutorMatchMessage(prev => prev || input);
+      await handleTutorSelection(tutorNumber);
+      return;
+    }
 
-      try {
-        const token = localStorage.getItem('token');
-        const response = await api.post('/ai/select-tutor', {
-          tutorIndex: tutorNumber,
-          originalMessage: lastTutorMatchMessage
-        }, token);
-
-        const successMessage = {
-          id: `ai-${Date.now()}`,
-          role: "ai",
-          content: response.data?.message || "I've connected you to the tutor!",
-          timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, {
-          id: `user-${Date.now()}`,
-          role: "user",
-          content: currentInput,
-          timestamp: new Date()
-        }, successMessage]);
-        
-        setPendingTutorSelection(false);
-        setLastTutorMatchMessage(null);
-        onNewMessage?.();
-      } catch (err) {
-        const errorMsg = {
-          id: `error-${Date.now()}`,
-          role: "ai",
-          content: err.response?.data?.message || "Sorry, I couldn't connect to that tutor. Please try again.",
-          timestamp: new Date(),
-          isError: true
-        };
-        setMessages(prev => [...prev, {
-          id: `user-${Date.now()}`,
-          role: "user",
-          content: currentInput,
-          timestamp: new Date()
-        }, errorMsg]);
-      } finally {
-        setIsTyping(false);
+    if (pendingQuestion) {
+      if (!input.trim()) {
+        setError("Please enter your question");
+        return;
       }
+      setError("");
+      setLastTutorMatchMessage(input);
+      const question = input.trim();
+      setInput("");
+      await handleQuestionSubmit(question);
       return;
     }
 
@@ -153,25 +351,41 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
         message: userMessage.content
       }, token);
 
-      const needsSelection = response.data?.response?.needsTutorSelection;
+      if (!response.data?.response) {
+        throw new Error('Invalid response from AI');
+      }
+
+      const data = response.data.response;
       
-      if (needsSelection) {
+      if (data.needsProgramSelection) {
+        setPendingProgramSelection(true);
+        setConversationState(data.conversationState);
+      } else if (data.needsSubTopicSelection) {
+        setPendingSubTopicSelection(true);
+        setConversationState(data.conversationState);
+      } else if (data.needsTutorSelection) {
         setPendingTutorSelection(true);
-        setLastTutorMatchMessage(userMessage.content);
+        setConversationState(data.conversationState);
+      } else if (data.needsQuestion) {
+        setPendingQuestion(true);
+        setConversationState(data.conversationState);
       }
 
       const aiMessage = {
         id: `ai-${Date.now()}`,
         role: "ai",
-        content: response.data?.response?.reply || "I received your message. How can I help you further?",
-        suggestions: response.data?.response?.suggestions || [],
-        tutorMatch: response.data?.response?.tutorMatch || null,
-        needsTutorSelection: needsSelection,
+        content: data.reply,
+        suggestions: data.suggestions || [],
+        tutorMatch: data.tutorMatch || null,
+        needsTutorSelection: data.needsTutorSelection,
+        needsProgramSelection: data.needsProgramSelection,
+        needsSubTopicSelection: data.needsSubTopicSelection,
+        needsQuestion: data.needsQuestion,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, aiMessage]);
-      onNewMessage?.();
+      setLastTutorMatchMessage(userMessage.content);
     } catch (err) {
       const errorMessage = {
         id: `error-${Date.now()}`,
@@ -256,9 +470,27 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
             >
               <p className="px-3 py-2 text-sm leading-relaxed">{msg.content}</p>
               
+              {msg.needsProgramSelection && (
+                <div className="px-3 pb-2">
+                  <p className="text-xs font-semibold text-blue-600">Enter the number of the program you need help with:</p>
+                </div>
+              )}
+              
+              {msg.needsSubTopicSelection && (
+                <div className="px-3 pb-2">
+                  <p className="text-xs font-semibold text-blue-600">Enter the number of the topic you need help with:</p>
+                </div>
+              )}
+              
               {msg.needsTutorSelection && (
                 <div className="px-3 pb-2">
                   <p className="text-xs font-semibold text-blue-600">Enter the number of the tutor you want to connect with:</p>
+                </div>
+              )}
+              
+              {msg.needsQuestion && (
+                <div className="px-3 pb-2">
+                  <p className="text-xs font-semibold text-blue-600">Please type your question for the tutor:</p>
                 </div>
               )}
               
@@ -319,7 +551,13 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
               if (error) setError("");
             }}
             onKeyPress={handleKeyPress}
-            placeholder={pendingTutorSelection ? "Enter tutor number..." : "Ask me anything..."}
+            placeholder={
+              pendingProgramSelection ? "Enter program number..." :
+              pendingSubTopicSelection ? "Enter topic number..." :
+              pendingTutorSelection ? "Enter tutor number..." :
+              pendingQuestion ? "Type your question..." :
+              "Ask me anything..."
+            }
             className="flex-1 bg-transparent outline-none text-sm text-gray-700 placeholder-gray-400"
             disabled={isTyping}
           />
@@ -337,7 +575,9 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
           </button>
         </div>
         <p className="text-center text-[10px] text-gray-400 mt-2">
-          Press Enter to send • Shift+Enter for new line
+          {pendingProgramSelection || pendingSubTopicSelection || pendingTutorSelection || pendingQuestion 
+            ? "Enter the number and press Send" 
+            : "Press Enter to send • Shift+Enter for new line"}
         </p>
       </form>
     </div>

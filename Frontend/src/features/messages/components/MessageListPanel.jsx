@@ -164,7 +164,7 @@ const MessageListPanel = ({
   const listToRender = variant === "inbox" ? filteredInboxItems : items;
 
   return (
-    <section className="flex min-h-[420px] flex-col overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.05)]">
+    <section className="flex h-[500px] flex-col overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.05)]">
       {variant === "inbox" ? (
         <div className="border-b border-slate-200 px-5 py-5 sm:px-6">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900">

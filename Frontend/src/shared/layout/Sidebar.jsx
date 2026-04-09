@@ -126,14 +126,14 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
           </section>
 
           <section
-            className={`mb-3 flex items-center gap-3 ${navItemClass("/message")}`}
+            className={`mb-3 flex items-center gap-3 ${navItemClass("/messages")}`}
           >
-            <BiMessageSquareDetail className={iconClass("/message")} />
+            <BiMessageSquareDetail className={iconClass("/messages")} />
             <a
-              href="/message"
+              href="/messages"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/message");
+                navigate("/messages");
               }}
             >
               Messages

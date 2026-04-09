@@ -14,7 +14,6 @@ import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
 import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
 import EditProfilePage from "./features/profile/components/EditProfilePage";
 import MessagesPage from "./features/messages/pages/MessagesPage";
-import Dashboard from "./features/dashboard/pages/Dashboard";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -45,9 +44,11 @@ function DashboardRouter() {
     );
   }
 
+  const isTutor = user?.role === 2 || user?.roleName === 'tutor';
+
   return (
     <>
-      {user?.role === 2 ? <TutorDashboard /> : <StudentDashboard />}
+      {isTutor ? <TutorDashboard /> : <StudentDashboard />}
       <FloatingAIChat />
     </>
   );
@@ -85,6 +86,10 @@ function ActiveCoursesPage() {
   );
 }
 
+function MessagesPageWrapper() {
+  return <MessagesPage />;
+}
+
 function App() {
   return (
     <LMSProvider>
@@ -93,11 +98,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/message" element={<MessagesPage />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/profile" element={<ProfileOverviewPage />} />
-
+          
           <Route
             path="/dashboard"
             element={
@@ -143,6 +144,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <MessagesPageWrapper />
+              </ProtectedRoute>
+            }
+          />
+          
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
