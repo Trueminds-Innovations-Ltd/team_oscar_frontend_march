@@ -130,11 +130,10 @@ function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
           >
             <BiMessageSquareDetail className={iconClass("/messages")} />
             <a
-              href="#"
+              href="/messages"
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/messages");
-                onClose();
               }}
             >
               Messages

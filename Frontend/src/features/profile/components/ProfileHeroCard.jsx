@@ -10,7 +10,12 @@ const SocialIcon = ({ label }) => {
       <>
         <rect x="4" y="4" width="16" height="16" rx="4" />
         <circle cx="12" cy="12" r="3.5" />
-        <circle cx="17.25" cy="6.75" r="1" className="fill-current stroke-none" />
+        <circle
+          cx="17.25"
+          cy="6.75"
+          r="1"
+          className="fill-current stroke-none"
+        />
       </>
     ),
     LinkedIn: (
@@ -29,7 +34,10 @@ const SocialIcon = ({ label }) => {
       aria-label={label}
       className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-sky-300 hover:text-sky-600"
     >
-      <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 fill-none stroke-current stroke-[1.7]">
+      <svg
+        viewBox="0 0 24 24"
+        className="h-4.5 w-4.5 fill-none stroke-current stroke-[1.7]"
+      >
         {icons[label]}
       </svg>
     </a>
@@ -37,7 +45,7 @@ const SocialIcon = ({ label }) => {
 };
 
 const ProfileHeroCard = ({ user }) => {
-  const firstName = user?.fullName ? user.fullName.split(' ')[0] : 'User';
+  const firstName = user?.fullName ? user.fullName.split(" ")[0] : "User";
   const initials = firstName.substring(0, 2).toUpperCase();
 
   return (
@@ -51,7 +59,11 @@ const ProfileHeroCard = ({ user }) => {
           <div className="relative">
             <div className="flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-white bg-[radial-gradient(circle_at_top,#334155,#111827)] text-3xl font-semibold text-white shadow-xl sm:h-32 sm:w-32">
               {user?.profileImage ? (
-                <img src={user.profileImage} alt={firstName} className="h-full w-full rounded-full object-cover" />
+                <img
+                  src={user.profileImage}
+                  alt={firstName}
+                  className="h-full w-full rounded-full object-cover"
+                />
               ) : (
                 <FaUser className="text-4xl" />
               )}
@@ -61,7 +73,10 @@ const ProfileHeroCard = ({ user }) => {
               aria-label="Update profile photo"
               className="absolute bottom-1 right-1 flex h-11 w-11 items-center justify-center rounded-full border-4 border-white bg-slate-100 text-slate-700 shadow-md transition hover:bg-slate-200"
             >
-              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5 fill-none stroke-current stroke-[1.8]"
+              >
                 <path d="M4 8a2 2 0 0 1 2-2h2l1.4-1.8A2 2 0 0 1 11 3h2a2 2 0 0 1 1.6.8L16 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" />
                 <circle cx="12" cy="12" r="3.2" />
               </svg>
@@ -70,13 +85,13 @@ const ProfileHeroCard = ({ user }) => {
 
           <div className="mt-5 text-center">
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              {user?.fullName || 'User'}
+              {user?.fullName || "User"}
             </h2>
             <p className="mt-2 text-sm font-medium text-slate-500 sm:text-base">
-              {user?.role || 'Student'}
+              {user?.role || "Student"}
             </p>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-500">
-              {user?.bio || 'Learning at TalentFlow Academy'}
+              {user?.bio || "Learning at TalentFlow Academy"}
             </p>
           </div>
 

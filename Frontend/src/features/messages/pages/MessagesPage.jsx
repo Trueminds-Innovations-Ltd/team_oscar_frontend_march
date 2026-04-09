@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-
+import React, { useMemo, useState, useEffect } from "react";
+import api from "../../../shared/api";
 import MessageChatPanel from "../components/MessageChatPanel";
 import MessageListPanel from "../components/MessageListPanel";
 import MessageSectionNav from "../components/MessageSectionNav";
@@ -7,32 +7,86 @@ import MessagesShell from "../components/MessagesShell";
 import {
   flowAiThread,
   inboxTabs,
-  inboxThreads,
   messageFolders,
   supportTickets,
   tutorChats,
 } from "../data/messagesData";
 
+const formatRelativeTime = (date) => {
+  if (!date) return '';
+  const now = new Date();
+  const diff = now - new Date(date);
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days === 1) return 'Yesterday';
+  if (days < 7) {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return daysOfWeek[new Date(date).getDay()];
+  }
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 const MessagesPage = () => {
   const [activeFolder, setActiveFolder] = useState("inbox");
   const [activeTab, setActiveTab] = useState("direct");
-  const [activeInboxId, setActiveInboxId] = useState("tylor-james");
+  const [activeInboxId, setActiveInboxId] = useState(null);
   const [activeTutorChatId, setActiveTutorChatId] = useState("tylor-james");
-  const [activeSupportTicketId, setActiveSupportTicketId] =
-    useState("quiz-scoring");
+  const [activeSupportTicketId, setActiveSupportTicketId] = useState("quiz-scoring");
+  
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeFolder === 'inbox') {
+      fetchConversations();
+      const interval = setInterval(() => {
+        fetchConversations();
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [activeFolder, activeTab]);
+
+  const fetchConversations = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await api.get('/conversations', token);
+      
+      let data = [];
+      if (Array.isArray(response)) {
+        data = response;
+      } else if (response.data && Array.isArray(response.data)) {
+        data = response.data;
+      }
+      
+      setConversations(data);
+      if (data.length > 0 && !activeInboxId) {
+        setActiveInboxId(data[0].id);
+        setSelectedConversation(data[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const visibleInboxThreads = useMemo(
-    () => inboxThreads.filter((thread) => thread.tab === activeTab),
-    [activeTab],
+    () => conversations.filter((thread) => thread.tab === activeTab || !thread.tab),
+    [activeTab, conversations],
   );
 
   const activeInboxThread = useMemo(() => {
-    const currentThread = inboxThreads.find(
-      (thread) => thread.id === activeInboxId,
-    );
-    if (currentThread && currentThread.tab === activeTab) return currentThread;
-    return visibleInboxThreads[0] || inboxThreads[0];
-  }, [activeInboxId, activeTab, visibleInboxThreads]);
+    if (!activeInboxId) return visibleInboxThreads[0] || null;
+    const currentThread = conversations.find((thread) => thread.id === activeInboxId);
+    return currentThread || visibleInboxThreads[0] || null;
+  }, [activeInboxId, activeTab, visibleInboxThreads, conversations]);
 
   const activeTutorChat = useMemo(
     () =>
@@ -56,14 +110,43 @@ const MessagesPage = () => {
           ? "tickets"
           : "tutor";
 
-  const activeItem =
-    currentVariant === "inbox"
-      ? activeInboxThread
-      : currentVariant === "flow-ai"
-        ? flowAiThread
-        : currentVariant === "tickets"
-          ? activeSupportTicket
-          : activeTutorChat;
+  const handleConversationSelect = async (convId) => {
+    setActiveInboxId(convId);
+    const conv = conversations.find(c => c.id === convId);
+    setSelectedConversation(conv);
+  };
+
+  const activeItem = useMemo(() => {
+    if (currentVariant === "inbox") {
+      return selectedConversation || activeInboxThread || {
+        id: 'empty',
+        name: 'No conversations',
+        avatar: '?',
+        avatarTone: 'from-slate-900 to-slate-700',
+        subtitle: 'Start a conversation with a tutor',
+        preview: 'No messages yet',
+        time: '',
+        unread: false,
+        messages: []
+      };
+    }
+    if (currentVariant === "flow-ai") return flowAiThread;
+    if (currentVariant === "tickets") return activeSupportTicket;
+    return activeTutorChat;
+  }, [currentVariant, selectedConversation, activeInboxThread, activeSupportTicket, activeTutorChat]);
+
+  const inboxItems = conversations.map(conv => ({
+    id: conv.id,
+    name: conv.name,
+    avatar: conv.avatar,
+    avatarTone: conv.avatarTone,
+    subtitle: conv.subtitle || conv.program,
+    preview: conv.preview,
+    time: formatRelativeTime(conv.time),
+    unread: conv.unread,
+    delivered: false,
+    tab: conv.tab || 'direct'
+  }));
 
   return (
     <MessagesShell>
@@ -89,9 +172,9 @@ const MessagesPage = () => {
               tabs={inboxTabs}
               activeTab={activeTab}
               onTabChange={setActiveTab}
-              items={inboxThreads}
-              activeItemId={activeInboxThread.id}
-              onSelect={setActiveInboxId}
+              items={inboxItems}
+              activeItemId={activeInboxId || activeInboxThread?.id}
+              onSelect={handleConversationSelect}
             />
           ) : null}
 
@@ -118,7 +201,11 @@ const MessagesPage = () => {
             />
           ) : null}
 
-          <MessageChatPanel variant={currentVariant} activeItem={activeItem} />
+          <MessageChatPanel 
+            variant={currentVariant} 
+            activeItem={activeItem}
+            refreshConversations={fetchConversations}
+          />
         </div>
       </div>
     </MessagesShell>

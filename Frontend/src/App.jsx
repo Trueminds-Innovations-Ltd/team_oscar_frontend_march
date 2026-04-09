@@ -44,9 +44,11 @@ function DashboardRouter() {
     );
   }
 
+  const isTutor = user?.role === 2 || user?.roleName === 'tutor';
+
   return (
     <>
-      {user?.role === 2 ? <TutorDashboard /> : <StudentDashboard />}
+      {isTutor ? <TutorDashboard /> : <StudentDashboard />}
       <FloatingAIChat />
     </>
   );
@@ -105,7 +107,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="/courses"
             element={
@@ -114,7 +116,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="/profile"
             element={
@@ -123,7 +125,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="/profile/edit"
             element={
@@ -132,7 +134,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="/active-courses"
             element={
@@ -141,7 +143,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="/messages"
             element={

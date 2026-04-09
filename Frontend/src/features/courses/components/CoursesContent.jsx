@@ -1,45 +1,46 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 import { FiMenu } from "react-icons/fi";
 import CourseCard from "./CourseCard";
 import CourseSection from "./CourseSection";
 import CoursesControlBar from "./CoursesControlBar";
-import LMSContext from '../../../contexts/LMSContext';
-import { useCourses } from '../../../contexts/CourseContext';
-import { formatTimeAgo } from '../../../shared/utils/dateUtils';
+import LMSContext from "../../../contexts/LMSContext";
+import { useCourses } from "../../../contexts/CourseContext";
+import { formatTimeAgo } from "../../../shared/utils/dateUtils";
 
 const programTitles = {
   "UI/UX": "UI/UX Design",
-  "Frontend": "Frontend Development",
+  Frontend: "Frontend Development",
   "Modern React Development": "Frontend Development",
-  "Backend": "Backend Development",
+  Backend: "Backend Development",
   "Data Analysis": "Data Analysis",
   "Product Management": "Product Management",
   "Cloud Engineering": "Cloud Engineering",
-  "Networking": "Networking",
-  "Cyber Security": "Cyber Security"
+  Networking: "Networking",
+  "Cyber Security": "Cyber Security",
 };
 
 function getProgramTitle(title) {
-  if (!title) return 'Study Session';
+  if (!title) return "Study Session";
   return programTitles[title] || title;
 }
 
-function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
+function CoursesContent({ isTutor }) {
   const { token } = useContext(LMSContext);
-  const { studySessions, studySessionProgress, openStudySessionModal } = useCourses();
+  const { studySessions, studySessionProgress, openStudySessionModal } =
+    useCourses();
 
   const now = new Date();
-  
+
   const activeSessions = studySessions
-    .filter(session => {
+    .filter((session) => {
       const startDate = new Date(session.startDate);
       const progress = studySessionProgress[session._id]?.progress || 0;
       return startDate <= now && progress === 0;
     })
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-  
+
   const upcomingSessions = studySessions
-    .filter(session => {
+    .filter((session) => {
       const startDate = new Date(session.startDate);
       const progress = studySessionProgress[session._id]?.progress || 0;
       return startDate > now && progress === 0;
@@ -47,14 +48,14 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
   const completedSessions = studySessions
-    .filter(session => {
+    .filter((session) => {
       const progress = studySessionProgress[session._id]?.progress || 0;
       return progress >= 100;
     })
     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
   const inProgressSessions = studySessions
-    .filter(session => {
+    .filter((session) => {
       const progress = studySessionProgress[session._id]?.progress || 0;
       return progress > 0 && progress < 100;
     })
@@ -63,12 +64,12 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
   const formatTimeLeft = (startDate) => {
     const start = new Date(startDate);
     const diff = start - now;
-    
-    if (diff <= 0) return 'In progress';
-    
+
+    if (diff <= 0) return "In progress";
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    
+
     if (days > 0) return `${days}d ${hours}h left`;
     return `${hours}h left`;
   };
@@ -95,30 +96,23 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
   return (
     <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-265">
-        <button
-          type="button"
-          onClick={onOpenSidebar}
-          className="mb-4 inline-flex items-center rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-700 hover:bg-gray-100 lg:hidden"
-          aria-label="Open sidebar"
-          aria-expanded={isSidebarOpen}
-          aria-controls="dashboard-sidebar"
-        >
-          <FiMenu size={18} />
-        </button>
-
         <header className="mb-3">
           <h1 className="text-[34px] font-extrabold tracking-[-0.5px] text-[#181f33]">
-            {isTutor ? 'My Study Sessions' : 'Study Sessions'}
+            {isTutor ? "My Study Sessions" : "Study Sessions"}
           </h1>
           <p className="text-[13px] font-medium text-[#7b8191]">
-            {isTutor ? 'Manage your created study sessions.' : 'Join live sessions with your tutors.'}
+            {isTutor
+              ? "Manage your created study sessions."
+              : "Join live sessions with your tutors."}
           </p>
         </header>
 
         <CoursesControlBar />
 
         <div className="space-y-4">
-          <CourseSection title={isTutor ? "Active Sessions" : "Active Sessions"}>
+          <CourseSection
+            title={isTutor ? "Active Sessions" : "Active Sessions"}
+          >
             {activeSessions.length === 0 ? (
               <p className="text-gray-500 py-4">No active sessions</p>
             ) : (
@@ -127,17 +121,29 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                   <CourseCard
                     key={session._id}
                     title={getProgramTitle(session.course?.title)}
-                    completion={isTutor ? `${getStudentCount(session)} students completed` : getCompletion(getProgress(session))}
+                    completion={
+                      isTutor
+                        ? `${getStudentCount(session)} students completed`
+                        : getCompletion(getProgress(session))
+                    }
                     progress={isTutor ? 0 : getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
-                    actionLabel={isTutor ? "View Details" : getProgress(session) > 0 ? "Resume" : "Start"}
+                    actionLabel={
+                      isTutor
+                        ? "View Details"
+                        : getProgress(session) > 0
+                          ? "Resume"
+                          : "Start"
+                    }
                     subTopic={session.subTopic}
                     tutorName={isTutor ? null : session.tutor?.name}
                     isTutor={isTutor}
                     fileUrl={session.fileUrl}
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
-                    onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    onCardClick={
+                      !isTutor ? () => openStudySessionModal(session) : null
+                    }
                     lastVisited={getLastVisited(session)}
                   />
                 ))}
@@ -145,7 +151,10 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
             )}
           </CourseSection>
 
-          <CourseSection title={isTutor ? "Upcoming Sessions" : "Upcoming Sessions"} actionLabel="View all">
+          <CourseSection
+            title={isTutor ? "Upcoming Sessions" : "Upcoming Sessions"}
+            actionLabel="View all"
+          >
             {upcomingSessions.length === 0 ? (
               <p className="text-gray-500 py-4">No upcoming sessions</p>
             ) : (
@@ -154,7 +163,11 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                   <CourseCard
                     key={session._id}
                     title={getProgramTitle(session.course?.title)}
-                    completion={isTutor ? `${getStudentCount(session)} students completed` : getCompletion(getProgress(session))}
+                    completion={
+                      isTutor
+                        ? `${getStudentCount(session)} students completed`
+                        : getCompletion(getProgress(session))
+                    }
                     progress={isTutor ? 0 : getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
                     actionLabel={isTutor ? "View Details" : "Start Course"}
@@ -164,7 +177,9 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     fileUrl={session.fileUrl}
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
-                    onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    onCardClick={
+                      !isTutor ? () => openStudySessionModal(session) : null
+                    }
                     lastVisited={getLastVisited(session)}
                   />
                 ))}
@@ -189,7 +204,9 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     fileUrl={session.fileUrl}
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
-                    onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    onCardClick={
+                      !isTutor ? () => openStudySessionModal(session) : null
+                    }
                     lastVisited={getLastVisited(session)}
                   />
                 ))}
@@ -214,7 +231,9 @@ function CoursesContent({ onOpenSidebar, isSidebarOpen, isTutor }) {
                     fileUrl={session.fileUrl}
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
-                    onCardClick={!isTutor ? () => openStudySessionModal(session) : null}
+                    onCardClick={
+                      !isTutor ? () => openStudySessionModal(session) : null
+                    }
                     lastVisited={getLastVisited(session)}
                   />
                 ))}

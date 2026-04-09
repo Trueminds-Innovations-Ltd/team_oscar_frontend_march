@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import NavBar from "./NavBar";
+// import Sidebar from "../../../shared/layout/Sidebar";
+// import NavBar from "../../../shared/layout/NavBar";
 
 const NavbarShell = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
