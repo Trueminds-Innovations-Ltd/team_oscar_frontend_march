@@ -18,18 +18,29 @@ import MessagesPage from "./features/messages/pages/MessagesPage";
 function EmailConfirm() {
   const { token } = useParams();
   const [status, setStatus] = useState('loading');
+  const [errorMsg, setErrorMsg] = useState('');
   
   useEffect(() => {
-    fetch(`https://team-oscar-backend-march.onrender.com/api/auth/confirm/${token}`)
-      .then(res => res.json())
+    console.log('Confirming token:', token);
+    fetch(`http://localhost:3000/api/auth/confirm/${token}`)
+      .then(res => {
+        console.log('Response status:', res.status);
+        return res.json();
+      })
       .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
           setStatus('success');
         } else {
           setStatus('error');
+          setErrorMsg(data.message || 'Unknown error');
         }
       })
-      .catch(() => setStatus('error'));
+      .catch(err => {
+        console.error('Fetch error:', err);
+        setStatus('error');
+        setErrorMsg(err.message);
+      });
   }, [token]);
 
   return (
@@ -45,7 +56,7 @@ function EmailConfirm() {
       {status === 'error' && (
         <div className="text-center">
           <h2>Confirmation Failed</h2>
-          <p>The confirmation link is invalid or expired.</p>
+          <p>{errorMsg || 'The confirmation link is invalid or expired.'}</p>
           <a href="/" className="text-blue-500 underline">Go to Login</a>
         </div>
       )}
