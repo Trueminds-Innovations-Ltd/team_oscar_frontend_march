@@ -13,6 +13,7 @@ import Courses from "./features/courses/pages/Courses";
 import ActiveCourses from "./features/activecourses/pages/ActiveCourses";
 import ProfileOverviewPage from "./features/profile/pages/ProfileOverviewPage";
 import EditProfilePage from "./features/profile/components/EditProfilePage";
+import MessagesPage from "./features/messages/pages/MessagesPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(LMSContext);
@@ -83,6 +84,10 @@ function ActiveCoursesPage() {
   );
 }
 
+function MessagesPageWrapper() {
+  return <MessagesPage />;
+}
+
 function App() {
   return (
     <LMSProvider>
@@ -133,6 +138,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ActiveCoursesPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <MessagesPageWrapper />
               </ProtectedRoute>
             }
           />
