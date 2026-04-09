@@ -83,10 +83,11 @@ const MessagesPage = () => {
   );
 
   const activeInboxThread = useMemo(() => {
-    if (!activeInboxId) return visibleInboxThreads[0] || null;
+    if (!activeInboxId && !selectedConversation) return null;
+    if (selectedConversation) return selectedConversation;
     const currentThread = conversations.find((thread) => thread.id === activeInboxId);
-    return currentThread || visibleInboxThreads[0] || null;
-  }, [activeInboxId, activeTab, visibleInboxThreads, conversations]);
+    return currentThread || null;
+  }, [activeInboxId, activeTab, visibleInboxThreads, conversations, selectedConversation]);
 
   const activeTutorChat = useMemo(
     () =>

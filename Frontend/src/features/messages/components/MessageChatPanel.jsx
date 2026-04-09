@@ -144,7 +144,7 @@ const MessageChatPanel = ({ variant, activeItem, refreshConversations }) => {
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(`/conversations/${activeItem.id}`, token);
+      const response = await api.get(`/conversations/${activeItem.id}?markRead=true`, token);
       
       const convData = response.conversation || response.data?.conversation || response;
       
