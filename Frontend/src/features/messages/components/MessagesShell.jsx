@@ -1,7 +1,7 @@
 import NavbarShell from "../../../shared/layout/NavBarShell";
 
-const ProfileShell = ({ children }) => {
+const MessageShell = ({ children }) => {
   return <NavbarShell children={children} />;
 };
 
-export default ProfileShell;
+export default MessageShell;

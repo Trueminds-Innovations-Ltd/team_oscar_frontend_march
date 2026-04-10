@@ -1,14 +1,11 @@
-import Sidebar from "../../../shared/layout/Sidebar";
-import { useEffect, useState, useContext } from "react";
-import CoursesContent from "../components/CoursesContent";
-import LMSContext from "../../../contexts/LMSContext";
-import { CourseProvider } from "../../../contexts/CourseContext";
-import NavBar from "../../../shared/layout/NavBar";
+import { useEffect, useState } from "react";
+import Sidebar from "./Sidebar";
+import NavBar from "./NavBar";
+// import Sidebar from "../../../shared/layout/Sidebar";
+// import NavBar from "../../../shared/layout/NavBar";
 
-function CoursesContentWrapper() {
+const NavbarShell = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { user } = useContext(LMSContext);
-  const isTutor = user?.role === 2;
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
@@ -40,22 +37,12 @@ function CoursesContentWrapper() {
           isSidebarOpen={isSidebarOpen}
         />
 
-        <CoursesContent
-          onOpenSidebar={() => setIsSidebarOpen(true)}
-          isSidebarOpen={isSidebarOpen}
-          isTutor={isTutor}
-        />
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+          {children}
+        </main>
       </section>
     </section>
   );
-}
+};
 
-function Courses() {
-  return (
-    <CourseProvider>
-      <CoursesContentWrapper />
-    </CourseProvider>
-  );
-}
-
-export default Courses;
+export default NavbarShell;
