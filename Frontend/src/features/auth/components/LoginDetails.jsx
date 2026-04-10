@@ -7,55 +7,65 @@ import LoginForm from "./LoginForm";
 
 function LoginDetails() {
   const navigate = useNavigate();
+
   return (
-    <div className="w-full h-full px-22 py-30 max-[1022px]:px-14 max-[936px]:px-10 max-[794px]:py-25 max-[700px]:py-10 max-[400px]:px-6 max-[320px]:px-2">
-      <div className="max-[700px]:flex max-[700px]:flex-col max-[700px]:items-center">
-        <Logo />
-        <h1 className="text-4xl text-primary-color font-bold leading-8.5 max-[1000px]:text-3xl max-[700px]:text-2xl">
-          Welcome back, Oscar
-        </h1>
+    <div className="w-[55%] h-screen overflow-y-auto px-6 py-12 md:px-10 lg:px-20 xl:px-24 flex flex-col items-center max-[700px]:w-full">
+      <div className="w-full max-w-120">
+        <div className="flex flex-col max-[700px]:items-center">
+          <Logo />
+          <h1 className="text-4xl text-primary-color font-extrabold leading-tight mt-8 max-[1100px]:text-3xl max-[700px]:text-2xl tracking-tight">
+            Welcome back, Oscar
+          </h1>
 
-        <p className="text-[16px] text-gray-500 font-semibold mt-3">
-          Log in to continue your learning journey
-        </p>
-      </div>
-
-      <div>
-        <Button
-          type="button"
-          className="w-full font-bold text-[16px] py-3 rounded-2xl mt-7 border-gray-500 bg-white cursor-pointer"
-          textColor="text-gray-900"
-          border="border"
-        >
-          <span className="flex items-center justify-center gap-2.5">
-            <Image src="./images/googlelogin.png" alt="google logo" />
-            <p>Continue with Google</p>
-          </span>
-        </Button>
-
-        <div className="flex items-center justify-between mt-4">
-          <hr className="w-40 text-gray-500 max-[500px]:w-25" />
-          <p className="text-gray-500 text-[14px] font-semibold text-center leading-4 py-3">
-            Or Continue With Email
+          <p className="text-[16px] text-gray-500 font-semibold mt-2">
+            Log in to continue your learning journey
           </p>
-          <hr className="w-40 text-gray-500  max-[500px]:w-25" />
         </div>
-      </div>
 
-      <LoginForm />
+        <div>
+          <Button
+            type="button"
+            className="w-full font-bold text-[16px] py-3.5 rounded-2xl mt-8 border-gray-300 bg-white cursor-pointer hover:bg-gray-50 transition-all shadow-sm"
+            textColor="text-gray-900"
+            border="border"
+          >
+            <span className="flex items-center justify-center gap-2.5">
+              <Image
+                src="./images/googlelogin.png"
+                alt="google logo"
+                className="w-5 h-5"
+              />
+              <p>Continue with Google</p>
+            </span>
+          </Button>
 
-      <TextBox
-        className="text-center text-[15px] leading-4 mt-4 font-bold"
-        textColor="text-gray-900"
-      >
-        Don't have an account?{" "}
-        <Button
-          onClick={() => navigate("/sign-up")}
-          textColor="text-primary-color"
+          <div className="flex items-center justify-between mt-8">
+            <hr className="flex-1 border-gray-200" />
+            <p className="text-gray-400 text-[11px] uppercase tracking-widest font-bold px-4">
+              Or Use Email
+            </p>
+            <hr className="flex-1 border-gray-200" />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <LoginForm />
+        </div>
+
+        <TextBox
+          className="text-center text-[15px] leading-4 mt-10 pb-12 font-bold"
+          textColor="text-gray-900"
         >
-          Sign up
-        </Button>
-      </TextBox>
+          Don't have an account?{" "}
+          <Button
+            onClick={() => navigate("/sign-up")}
+            textColor="text-primary-color"
+            className="hover:underline font-extrabold"
+          >
+            Sign up
+          </Button>
+        </TextBox>
+      </div>
     </div>
   );
 }

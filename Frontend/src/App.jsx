@@ -4,6 +4,7 @@ import { LMSProvider } from "./contexts/LMSContext";
 import { CourseProvider } from "./contexts/CourseContext";
 import LMSContext from "./contexts/LMSContext";
 import SpinnerFullPage from "./features/Spinner/components/SpinnerFullPage";
+import VerifyEmail from "./features/auth/pages/VerifyEmail";
 
 const Login = lazy(() => import("./features/auth/pages/Login"));
 const SignUp = lazy(() => import("./features/auth/pages/SignUp"));
@@ -113,6 +114,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/verify" element={<VerifyEmail />} />
 
           {/* Protected Routes */}
           <Route

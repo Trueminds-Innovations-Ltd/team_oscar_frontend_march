@@ -12,7 +12,7 @@ import Input from "./Input";
 import Button from "../../../shared/ui/Button";
 import LMSContext from "../../../contexts/LMSContext";
 
-function SignUpForm() {
+function SignUpDetails() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [name, setName] = useState("");
@@ -29,7 +29,7 @@ function SignUpForm() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { signup, login } = useContext(LMSContext);
+  const { signup } = useContext(LMSContext);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -55,17 +55,14 @@ function SignUpForm() {
         phone,
         country,
         state,
-        city
+        city,
       };
-      
+
       await signup(name, email, password, role, userData);
-      
-      // Auto login after signup
-      await login(email, password);
-      
+
       setSuccess("Account created! Redirecting to setup...");
       setTimeout(() => {
-        navigate("/onboarding");
+        navigate("/verify");
       }, 1500);
     } catch (err) {
       setError(err.message || "Signup failed. Please try again.");
@@ -142,7 +139,10 @@ function SignUpForm() {
               Country
             </label>
             <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-              <IonIcon icon={locationOutline} className="text-gray-500 text-xl" />
+              <IonIcon
+                icon={locationOutline}
+                className="text-gray-500 text-xl"
+              />
               <Input
                 type="text"
                 placeholder="Nigeria"
@@ -195,7 +195,7 @@ function SignUpForm() {
                 name="role"
                 value={1}
                 checked={role === 1}
-                onChange={(e) => setRole(1)}
+                onChange={() => setRole(1)}
                 className="w-4 h-4"
               />
               <span>Student</span>
@@ -206,7 +206,7 @@ function SignUpForm() {
                 name="role"
                 value={2}
                 checked={role === 2}
-                onChange={(e) => setRole(2)}
+                onChange={() => setRole(2)}
                 className="w-4 h-4"
               />
               <span>Tutor</span>
@@ -220,7 +220,10 @@ function SignUpForm() {
           </label>
           <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
             <div className="flex items-center gap-2">
-              <IonIcon icon={lockClosedOutline} className="text-gray-500 text-xl" />
+              <IonIcon
+                icon={lockClosedOutline}
+                className="text-gray-500 text-xl"
+              />
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
@@ -237,7 +240,10 @@ function SignUpForm() {
               {showPassword ? (
                 <IonIcon icon={eyeOutline} className="text-gray-500 text-xl" />
               ) : (
-                <IonIcon icon={eyeOffOutline} className="text-gray-500 text-xl" />
+                <IonIcon
+                  icon={eyeOffOutline}
+                  className="text-gray-500 text-xl"
+                />
               )}
             </Button>
           </div>
@@ -249,7 +255,10 @@ function SignUpForm() {
           </label>
           <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
             <div className="flex items-center gap-2">
-              <IonIcon icon={lockClosedOutline} className="text-gray-500 text-xl" />
+              <IonIcon
+                icon={lockClosedOutline}
+                className="text-gray-500 text-xl"
+              />
               <Input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Re-Enter Password"
@@ -266,7 +275,10 @@ function SignUpForm() {
               {showConfirmPassword ? (
                 <IonIcon icon={eyeOutline} className="text-gray-500 text-xl" />
               ) : (
-                <IonIcon icon={eyeOffOutline} className="text-gray-500 text-xl" />
+                <IonIcon
+                  icon={eyeOffOutline}
+                  className="text-gray-500 text-xl"
+                />
               )}
             </Button>
           </div>
@@ -286,4 +298,4 @@ function SignUpForm() {
   );
 }
 
-export default SignUpForm;
+export default SignUpDetails;
