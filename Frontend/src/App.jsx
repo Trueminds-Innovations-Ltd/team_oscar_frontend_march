@@ -42,7 +42,9 @@ function EmailConfirm() {
 
   useEffect(() => {
     console.log("Confirming token:", token);
-    fetch(`http://localhost:3000/api/auth/confirm/${token}`)
+    fetch(
+      `https://team-oscar-backend-march-8and.onrender.com/api/auth/confirm/${token}`,
+    )
       .then((res) => {
         console.log("Response status:", res.status);
         return res.json();
