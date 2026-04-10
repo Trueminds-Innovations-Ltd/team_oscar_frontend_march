@@ -9,7 +9,7 @@ import { useContext, useState, useEffect, lazy, Suspense } from "react";
 import { LMSProvider } from "./contexts/LMSContext";
 import { CourseProvider } from "./contexts/CourseContext";
 import LMSContext from "./contexts/LMSContext";
-import SpinnerFullPage from "./Spinner/components/SpinnerFullPage";
+import SpinnerFullPage from "./features/Spinner/components/SpinnerFullPage";
 
 const Login = lazy(() => import("./features/auth/pages/Login"));
 const SignUp = lazy(() => import("./features/auth/pages/SignUp"));
