@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../../shared/ui/Button";
 import Logo from "../../../shared/ui/Logo";
 import TextBox from "../../../shared/ui/TextBox";
 
 function EmailVerifiedSuccess() {
   const navigate = useNavigate();
-  const { token } = useParams(); // Get token from URL params
+  const [params] = useSearchParams();
   const [status, setStatus] = useState("verifying"); // verifying, success, error
   const [errorMessage, setErrorMessage] = useState("");
+
+  const token = params.get("token");
 
   useEffect(() => {
     const confirmEmail = async () => {
