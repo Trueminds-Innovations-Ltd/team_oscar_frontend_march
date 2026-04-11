@@ -26,7 +26,7 @@ function EmailVerifiedSuccess() {
           "https://team-oscar-backend-march-8and.onrender.com/api";
 
         const res = await fetch(`${API_URL}/auth/confirm/${token}`, {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
