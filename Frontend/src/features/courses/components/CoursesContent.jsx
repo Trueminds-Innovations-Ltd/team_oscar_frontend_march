@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import dayjs from "dayjs";
 import { FiMenu } from "react-icons/fi";
 import CourseCard from "./CourseCard";
 import CourseSection from "./CourseSection";
@@ -29,7 +30,7 @@ function CoursesContent({ isTutor }) {
   const { studySessions, studySessionProgress, studySessionsLoading, openStudySessionModal } =
     useCourses();
 
-  const now = new Date();
+  const now = dayjs();
 
   const activeSessions = studySessions
     .filter((session) => {
@@ -61,14 +62,15 @@ function CoursesContent({ isTutor }) {
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
   const formatTimeLeft = (startDate) => {
-    const start = new Date(startDate);
-    const diff = start - now;
+    const start = dayjs(startDate);
+    const nowLocal = dayjs();
+    const diffMs = start.diff(nowLocal);
 
-    if (diff <= 0) return "In progress";
+    if (diffMs <= 0) return "In progress";
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (days > 0) return `${days}d ${hours}h left`;
     if (hours > 0) return `${hours}h ${minutes}m left`;
@@ -214,7 +216,7 @@ function CoursesContent({ isTutor }) {
                     completion={getCompletion(getProgress(session))}
                     progress={getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
-                    actionLabel="Resume"
+                    actionLabel="Resume Study"
                     subTopic={session.subTopic}
                     tutorName={isTutor ? null : session.tutor?.name}
                     isTutor={isTutor}
@@ -225,6 +227,7 @@ function CoursesContent({ isTutor }) {
                       !isTutor ? () => openStudySessionModal(session) : null
                     }
                     lastVisited={getLastVisited(session)}
+                    showButton={true}
                   />
                 ))}
               </div>

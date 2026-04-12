@@ -18,6 +18,7 @@ function CourseCard({
   sessionId,
   onCardClick,
   lastVisited,
+  showButton = false,
 }) {
   const navigate = useNavigate();
 
@@ -95,10 +96,11 @@ function CourseCard({
             </p>
           )}
 
+          {(showButton || actionLabel) && (
           <button
             type="button"
             disabled={disabled}
-            className={`inline-flex items-center rounded-full px-4 py-1.5 text-[9px] font-semibold transition-colors cursor-pointer ${
+            className={`w-full sm:w-auto inline-flex items-center justify-center rounded-full px-3 py-2 sm:px-4 sm:py-1.5 text-[9px] sm:text-[9px] font-semibold transition-colors cursor-pointer ${
               disabled
                 ? "cursor-not-allowed bg-[#d5d9e2] text-[#f5f7fb]"
                 : "bg-[#2542a1] text-white hover:bg-[#1e3580]"
@@ -106,8 +108,9 @@ function CourseCard({
             onClick={handleAction}
           >
             {actionLabel}
-            {!disabled && <FiChevronRight className="ml-1" />}
+            {!disabled && showButton && <FiChevronRight className="ml-1" />}
           </button>
+        )}
         </div>
       </div>
     </article>

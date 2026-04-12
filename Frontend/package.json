@@ -12,6 +12,7 @@
   "dependencies": {
     "@ionic/react": "^8.8.3",
     "@tailwindcss/vite": "^4.2.2",
+    "dayjs": "^1.11.20",
     "ionicons": "^8.0.13",
     "lucide-react": "^1.8.0",
     "react": "^19.2.4",

@@ -24,9 +24,15 @@ function LearningModuleCard() {
   const navigate = useNavigate();
   
   const latestSession = getLatestIncomplete();
-  const latestProgress = latestSession ? studySessionProgress[latestSession._id] : null;
+  const rawProgress = latestSession ? studySessionProgress[latestSession._id] : null;
+  
+  const latestProgress = rawProgress && typeof rawProgress === 'object' ? {
+    progress: typeof rawProgress.progress === 'number' && !isNaN(rawProgress.progress) ? rawProgress.progress : 0,
+    lastPosition: typeof rawProgress.lastPosition === 'number' && !isNaN(rawProgress.lastPosition) ? rawProgress.lastPosition : 0,
+    updatedAt: rawProgress.updatedAt
+  } : null;
 
-  if (!latestSession) {
+  if (!latestSession || !latestProgress || latestProgress.progress <= 0) {
     return (
       <section className="w-full rounded-lg border border-gray-300 p-4 flex flex-col gap-4 lg:flex-row">
         <section className="h-[180px] w-full rounded-lg bg-gray-200 sm:h-[220px] lg:h-[200px] lg:max-w-[500px] flex items-center justify-center">

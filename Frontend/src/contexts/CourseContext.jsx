@@ -181,6 +181,36 @@ export function CourseProvider({ children }) {
   const closeStudySessionModal = () => {
     setStudySessionModal({ isOpen: false, session: null });
     loadStudySessions();
+    refreshProgress();
+  };
+
+  const refreshProgress = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await api.get('/study-sessions/my-progress', token);
+      if (response.data?.progressMap) {
+        const rawMap = response.data.progressMap;
+        const cleanedMap = {};
+        Object.keys(rawMap).forEach(sessionId => {
+          const p = rawMap[sessionId];
+          if (p && typeof p === 'object') {
+            cleanedMap[sessionId] = {
+              progress: typeof p.progress === 'number' && !isNaN(p.progress) ? p.progress : 0,
+              lastPosition: typeof p.lastPosition === 'number' && !isNaN(p.lastPosition) ? p.lastPosition : 0,
+              completed: p.completed === true,
+              createdAt: p.createdAt,
+              updatedAt: p.updatedAt
+            };
+          }
+        });
+        console.log('Refreshed progress map:', cleanedMap);
+        setStudySessionProgress(prev => ({ ...prev, ...cleanedMap }));
+      }
+    } catch (err) {
+      console.error('Failed to refresh progress:', err.message);
+    }
   };
 
   const getIncompleteStudySessions = useCallback(() => {
