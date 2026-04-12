@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../../shared/ui/Button";
 import Logo from "../../../shared/ui/Logo";
 import TextBox from "../../../shared/ui/TextBox";
+import { API_URL } from "../../../shared/api";
 
 function EmailVerifiedSuccess() {
   const navigate = useNavigate();
@@ -21,10 +22,6 @@ function EmailVerifiedSuccess() {
       }
 
       try {
-        // Replace with your actual backend URL
-        const API_URL =
-          "https://team-oscar-backend-march-8and.onrender.com/api";
-
         const res = await fetch(`${API_URL}/auth/confirm/${token}`, {
           method: "GET",
           headers: {

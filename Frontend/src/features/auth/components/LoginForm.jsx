@@ -1,10 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { IonIcon } from "@ionic/react";
-import { eyeOffOutline } from "ionicons/icons";
-import { eyeOutline } from "ionicons/icons";
-import { mailOutline } from "ionicons/icons";
-import { lockClosedOutline } from "ionicons/icons";
+import { IoEyeOff, IoEye, IoMail, IoLockClosed } from "react-icons/io5";
 import Input from "./Input";
 import Button from "../../../shared/ui/Button";
 import LMSContext from "../../../contexts/LMSContext";
@@ -62,7 +58,7 @@ function LoginForm() {
           Email
         </label>
         <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-          <IonIcon icon={mailOutline} className="text-gray-500 text-xl" />
+          <IoMail className="text-gray-500 text-xl" />
           <Input
             type="email"
             placeholder="Johndoe@gmail.com"
@@ -79,10 +75,7 @@ function LoginForm() {
         </label>
         <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
           <div className="flex items-center gap-2">
-            <IonIcon
-              icon={lockClosedOutline}
-              className="text-gray-500 text-xl"
-            />
+            <IoLockClosed className="text-gray-500 text-xl" />
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
@@ -97,9 +90,9 @@ function LoginForm() {
             type="button"
           >
             {showPassword ? (
-              <IonIcon icon={eyeOutline} className="text-gray-500 text-xl" />
+              <IoEye className="text-gray-500 text-xl" />
             ) : (
-              <IonIcon icon={eyeOffOutline} className="text-gray-500 text-xl" />
+              <IoEyeOff className="text-gray-500 text-xl" />
             )}
           </Button>
         </div>

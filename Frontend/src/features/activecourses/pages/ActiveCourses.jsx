@@ -7,6 +7,7 @@ import LessonOverviewPanel from "../components/LessonOverviewPanel";
 import LessonSidebarPanel from "../components/LessonSidebarPanel";
 import MaterialsDownloadsPanel from "../components/MaterialsDownloadsPanel";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { API_URL } from "../../../shared/api";
 
 function ActiveCourses() {
   const navigate = useNavigate();
@@ -142,7 +143,7 @@ function StudySessionMaterials({ sessionData }) {
     setCompleting(true);
     try {
       const response = await fetch(
-        `https://team-oscar-backend-march-8and.onrender.com/api/study-sessions/${sessionData.sessionId}/complete`,
+        `${API_URL}/study-sessions/${sessionData.sessionId}/complete`,
         {
           method: "POST",
           headers: {

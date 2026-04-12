@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { IoClose } from "react-icons/io5";
-import api from "../../../shared/api";
+import api, { API_URL } from "../../../shared/api";
 import LMSContext from "../../../contexts/LMSContext";
 
 const courseTitleToProgram = {
@@ -342,7 +342,7 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
         formDataUpload.append("file", file);
 
         const response = await fetch(
-          "https://team-oscar-backend-march-8and.onrender.com/api/upload",
+          `${API_URL}/upload`,
           {
             method: "POST",
             headers: {

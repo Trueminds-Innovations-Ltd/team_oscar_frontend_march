@@ -1,4 +1,5 @@
-const API_URL = "https://team-oscar-backend-march-8and.onrender.com/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+export { API_URL };
 
 export const api = {
   async post(endpoint, data, token = null) {

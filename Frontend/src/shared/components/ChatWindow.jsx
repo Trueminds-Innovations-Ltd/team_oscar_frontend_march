@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { sendOutline, chevronDownOutline, closeOutline } from "ionicons/icons";
+import { IoSendSharp, IoChevronDown, IoClose } from "react-icons/io5";
 import api from "../api";
 
 const ROBOT_ICON = (
@@ -521,14 +521,14 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
             className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             aria-label="Minimize chat"
           >
-            <IonIcon icon={chevronDownOutline} className="text-lg" />
+            <IoChevronDown className="text-lg" />
           </button>
           <button
             onClick={onClose}
             className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             aria-label="Close chat"
           >
-            <IonIcon icon={closeOutline} className="text-lg" />
+            <IoClose className="text-lg" />
           </button>
         </div>
       </div>
@@ -689,7 +689,7 @@ function ChatWindow({ onClose, onMinimize, onNewMessage }) {
             }`}
             aria-label="Send message"
           >
-            <IonIcon icon={sendOutline} className="text-lg" />
+            <IoSendSharp className="text-lg" />
           </button>
         </div>
         <p className="text-center text-[10px] text-gray-400 mt-2">

@@ -1,13 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { IonIcon } from "@ionic/react";
-import { eyeOffOutline } from "ionicons/icons";
-import { eyeOutline } from "ionicons/icons";
-import { mailOutline } from "ionicons/icons";
-import { lockClosedOutline } from "ionicons/icons";
-import { personOutline } from "ionicons/icons";
-import { callOutline } from "ionicons/icons";
-import { locationOutline } from "ionicons/icons";
+import { IoEyeOff, IoEye, IoMail, IoLockClosed, IoPerson, IoCall, IoLocation } from "react-icons/io5";
 import Input from "./Input";
 import Button from "../../../shared/ui/Button";
 import LMSContext from "../../../contexts/LMSContext";
@@ -90,7 +83,7 @@ function SignUpDetails() {
             Full Name
           </label>
           <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-            <IonIcon icon={personOutline} className="text-gray-500 text-xl" />
+            <IoPerson className="text-gray-500 text-xl" />
             <Input
               type="text"
               placeholder="E.G Kayode Chinedu"
@@ -106,7 +99,7 @@ function SignUpDetails() {
             Email
           </label>
           <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-            <IonIcon icon={mailOutline} className="text-gray-500 text-xl" />
+            <IoMail className="text-gray-500 text-xl" />
             <Input
               type="email"
               placeholder="Johndoe@gmail.com"
@@ -122,7 +115,7 @@ function SignUpDetails() {
             Phone
           </label>
           <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-            <IonIcon icon={callOutline} className="text-gray-500 text-xl" />
+            <IoCall className="text-gray-500 text-xl" />
             <Input
               type="tel"
               placeholder="+2348162345678"
@@ -139,8 +132,7 @@ function SignUpDetails() {
               Country
             </label>
             <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-              <IonIcon
-                icon={locationOutline}
+              <IoLocation
                 className="text-gray-500 text-xl"
               />
               <Input
@@ -173,7 +165,7 @@ function SignUpDetails() {
             City
           </label>
           <div className="bg-white flex items-center gap-2 border border-gray-500 py-4 pl-4 rounded-2xl mt-2">
-            <IonIcon icon={locationOutline} className="text-gray-500 text-xl" />
+            <IoLocation className="text-gray-500 text-xl" />
             <Input
               type="text"
               placeholder="Ajah"
@@ -220,10 +212,7 @@ function SignUpDetails() {
           </label>
           <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
             <div className="flex items-center gap-2">
-              <IonIcon
-                icon={lockClosedOutline}
-                className="text-gray-500 text-xl"
-              />
+              <IoLockClosed className="text-gray-500 text-xl" />
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
@@ -238,10 +227,9 @@ function SignUpDetails() {
               type="button"
             >
               {showPassword ? (
-                <IonIcon icon={eyeOutline} className="text-gray-500 text-xl" />
+                <IoEye className="text-gray-500 text-xl" />
               ) : (
-                <IonIcon
-                  icon={eyeOffOutline}
+                <IoEyeOff
                   className="text-gray-500 text-xl"
                 />
               )}
@@ -255,10 +243,7 @@ function SignUpDetails() {
           </label>
           <div className="bg-white flex items-center justify-between border border-gray-500 py-4 pl-4 pr-4 rounded-2xl mt-2 max-[320px]:pr-5">
             <div className="flex items-center gap-2">
-              <IonIcon
-                icon={lockClosedOutline}
-                className="text-gray-500 text-xl"
-              />
+              <IoLockClosed className="text-gray-500 text-xl" />
               <Input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Re-Enter Password"
@@ -273,10 +258,9 @@ function SignUpDetails() {
               type="button"
             >
               {showConfirmPassword ? (
-                <IonIcon icon={eyeOutline} className="text-gray-500 text-xl" />
+                <IoEye className="text-gray-500 text-xl" />
               ) : (
-                <IonIcon
-                  icon={eyeOffOutline}
+                <IoEyeOff
                   className="text-gray-500 text-xl"
                 />
               )}
