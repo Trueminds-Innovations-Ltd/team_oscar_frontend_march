@@ -1,6 +1,6 @@
 import { FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { formatTimeAgo } from '../../../shared/utils/dateUtils';
+import { formatTimeAgo } from "../../../shared/utils/dateUtils";
 
 function CourseCard({
   title,
@@ -19,30 +19,32 @@ function CourseCard({
   lastVisited,
 }) {
   const navigate = useNavigate();
-  
+
   const handleAction = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (onCardClick) {
       onCardClick();
       return;
     }
-    
-    const baseUrl = 'http://localhost:3000';
-    const sessionData = encodeURIComponent(JSON.stringify({
-      title,
-      subTopic,
-      tutorName,
-      fileUrl: fileUrl?.startsWith('/') ? baseUrl + fileUrl : fileUrl,
-      linkUrl,
-      sessionId
-    }));
-    
+
+    const baseUrl = "https://team-oscar-backend-march-8and.onrender.com";
+    const sessionData = encodeURIComponent(
+      JSON.stringify({
+        title,
+        subTopic,
+        tutorName,
+        fileUrl: fileUrl?.startsWith("/") ? baseUrl + fileUrl : fileUrl,
+        linkUrl,
+        sessionId,
+      }),
+    );
+
     navigate(`/active-courses?session=${sessionData}`);
   };
   return (
-    <article 
+    <article
       className="rounded-[10px] border border-[#d4d8e3] bg-white p-2.5 shadow-[0_2px_0_rgba(0,0,0,0.02)] cursor-pointer hover:bg-gray-50"
       onClick={handleAction}
     >
@@ -50,13 +52,15 @@ function CourseCard({
 
       <div className="mt-3 space-y-2">
         <p className="text-[10px] font-semibold text-[#252c3d]">{title}</p>
-        
+
         {subTopic && (
           <p className="text-[9px] font-medium text-[#636e85]">{subTopic}</p>
         )}
-        
+
         {tutorName && (
-          <p className="text-[8px] font-medium text-[#667085]">Tutor: {tutorName}</p>
+          <p className="text-[8px] font-medium text-[#667085]">
+            Tutor: {tutorName}
+          </p>
         )}
 
         <div className="flex items-center justify-between text-[9px] font-medium text-[#636e85]">
@@ -82,7 +86,9 @@ function CourseCard({
           ) : (
             <p className="flex items-center gap-1 text-[8px] font-medium text-[#667085]">
               <span className="inline-block h-1.25 w-1.25 rounded-full bg-[#20bf55]" />
-              {lastVisited && progress > 0 ? `opened ${formatTimeAgo(lastVisited)}` : 'Not started'}
+              {lastVisited && progress > 0
+                ? `opened ${formatTimeAgo(lastVisited)}`
+                : "Not started"}
             </p>
           )}
 
