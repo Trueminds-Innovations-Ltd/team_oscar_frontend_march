@@ -24,6 +24,7 @@ function StudySessionModal({ session, onClose }) {
   const [lastPosition, setLastPosition] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
@@ -35,17 +36,20 @@ function StudySessionModal({ session, onClose }) {
       const token = localStorage.getItem('token');
       const url = `/study-sessions/${session._id}/progress`;
       const response = await api.get(url, token);
+       console.log('Progress API response:', response.data);
       if (response.data?.progress) {
         const rawProgress = response.data.progress;
-        const validProgress = typeof rawProgress.progress === 'number' && !isNaN(rawProgress.progress) ? rawProgress.progress : 0;
-        const validLastPosition = typeof rawProgress.lastPosition === 'number' && !isNaN(rawProgress.lastPosition) ? rawProgress.lastPosition : 0;
+        console.log('Raw progress from DB:', rawProgress);
+        
+        const validProgress = Number(rawProgress.progress) || 0;
+        const validLastPosition = Number(rawProgress.lastPosition) || 0;
         const validCompleted = rawProgress.completed === true;
+        
+        console.log('Setting - progress:', validProgress, 'lastPosition:', validLastPosition);
         
         setProgress(validProgress);
         setLastPosition(validLastPosition);
         setCompleted(validCompleted);
-        
-        console.log('Loaded progress:', validProgress, 'lastPosition:', validLastPosition);
       }
     } catch (err) {
       console.error('Failed to load progress:', err.message);
@@ -80,8 +84,8 @@ function StudySessionModal({ session, onClose }) {
 
   const saveProgress = async (prog, pos) => {
     try {
-      const cleanProg = typeof prog === 'number' && !isNaN(prog) ? Math.min(100, Math.max(0, Math.round(prog))) : 0;
-      const cleanPos = typeof pos === 'number' && !isNaN(pos) ? Math.round(pos) : 0;
+      const cleanProg = Math.min(100, Math.max(0, Math.round(prog || 0)));
+      const cleanPos = Math.round(pos || 0);
       
       console.log('Saving progress:', cleanProg, 'lastPosition:', cleanPos);
       
@@ -103,8 +107,27 @@ function StudySessionModal({ session, onClose }) {
   }, [loading, lastPosition]);
 
   const handleClose = async () => {
-    await saveProgress(progress, lastPosition);
-    onClose();
+    if (isClosing) return;
+    
+    setIsClosing(true);
+    
+    try {
+      const cleanProg = typeof progress === 'number' && !isNaN(progress) ? Math.min(100, Math.max(0, Math.round(progress))) : 0;
+      const cleanPos = typeof lastPosition === 'number' && !isNaN(lastPosition) ? Math.round(lastPosition) : 0;
+      
+      const token = localStorage.getItem('token');
+      await api.post(`/study-sessions/${session._id}/progress`, {
+        progress: cleanProg,
+        lastPosition: cleanPos
+      }, token);
+      
+      onClose();
+    } catch (err) {
+      console.error('Failed to save progress:', err);
+      onClose();
+    } finally {
+      setIsClosing(false);
+    }
   };
 
   const formatContent = (content) => {
@@ -144,9 +167,14 @@ function StudySessionModal({ session, onClose }) {
           </div>
           <button
             onClick={handleClose}
-            className="flex-shrink-0 rounded-full p-2 hover:bg-gray-100 transition-colors"
+            disabled={isClosing}
+            className={`flex-shrink-0 rounded-full p-2 transition-colors ${isClosing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
           >
-            <IoClose size={24} className="text-gray-500" />
+            {isClosing ? (
+              <div className="w-6 h-6 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <IoClose size={24} className="text-gray-500" />
+            )}
           </button>
         </div>
 

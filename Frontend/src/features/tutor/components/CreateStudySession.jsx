@@ -398,7 +398,7 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
         subTopic: formData.subTopic,
         fileUrl: formData.fileUrl,
         linkUrl: formData.linkUrl,
-        startDate: formData.startDate,
+        startDate: new Date(formData.startDate).toISOString(),
       };
 
       await api.post("/study-sessions", payload, token);

@@ -1,5 +1,7 @@
 import { useCourses } from '../../../contexts/CourseContext';
 import { formatTimeAgo } from '../../../shared/utils/dateUtils';
+import { useNavigate } from 'react-router-dom';
+import { FiChevronRight } from 'react-icons/fi';
 
 const programTitles = {
   "UI/UX": "UI/UX Design",
@@ -19,7 +21,8 @@ function getProgramTitle(title) {
 }
 
 function Statistics() {
-  const { inProgressCourses, studySessions, studySessionProgress } = useCourses();
+  const { inProgressCourses, studySessions, studySessionProgress, openStudySessionModal } = useCourses();
+  const navigate = useNavigate();
 
   const incompleteCourses = inProgressCourses.filter(c => c.progress < 100);
   
@@ -64,41 +67,53 @@ function Statistics() {
           <>
             {incompleteSessions.map((session) => {
               const progress = studySessionProgress[session._id];
+              const handleResume = () => {
+                openStudySessionModal(session);
+              };
               return (
                 <div 
                   key={session._id}
-                  className="flex items-center gap-3 sm:gap-4 py-4 border-b border-gray-200"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 py-4 border-b border-gray-200"
                 >
-                  <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-blue-900 flex-shrink-0 flex items-center justify-center">
-                    <span className="text-white text-xs">SS</span>
-                  </div>
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-blue-900 flex-shrink-0 flex items-center justify-center">
+                      <span className="text-white text-xs">SS</span>
+                    </div>
 
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {getProgramTitle(session.course?.title)}
-                    </p>
-                    <p className="truncate text-xs text-gray-500">{session.subTopic}</p>
-                    
-                    <div className="mt-2">
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full transition-all duration-500 ${getProgressColor(progress?.progress || 0)}`}
-                          style={{ width: `${progress?.progress || 0}%` }}
-                        />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
+                        {getProgramTitle(session.course?.title)}
+                      </p>
+                      <p className="truncate text-xs text-gray-500">{session.subTopic}</p>
+                      
+                      <div className="mt-2">
+                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full transition-all duration-500 ${getProgressColor(progress?.progress || 0)}`}
+                            style={{ width: `${progress?.progress || 0}%` }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-1">
+                        <p className={`text-xs font-medium ${getProgressTextColor(progress?.progress || 0)}`}>
+                          {progress?.progress || 0}% complete
+                        </p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center justify-between mt-1">
-                      <p className={`text-xs font-medium ${getProgressTextColor(progress?.progress || 0)}`}>
-                        {progress?.progress || 0}% complete
-                      </p>
-                    </div>
                   </div>
 
-                  <div className="flex-shrink-0 text-right">
+                  <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2">
                     <p className="text-xs text-gray-500">
                       {progress?.updatedAt ? formatTimeAgo(progress.updatedAt) : 'Not started'}
                     </p>
+                    <button
+                      onClick={handleResume}
+                      className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 bg-blue-900 text-white text-xs rounded-lg hover:bg-blue-800 transition-colors"
+                    >
+                      Resume Study
+                      <FiChevronRight className="text-xs" />
+                    </button>
                   </div>
                 </div>
               );
