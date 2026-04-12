@@ -1,6 +1,7 @@
 import { FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { formatTimeAgo } from "../../../shared/utils/dateUtils";
+import { API_URL } from "../../../shared/api";
 
 function CourseCard({
   title,
@@ -24,12 +25,14 @@ function CourseCard({
     e.preventDefault();
     e.stopPropagation();
 
+    if (disabled) return;
+
     if (onCardClick) {
       onCardClick();
       return;
     }
 
-    const baseUrl = "https://team-oscar-backend-march-8and.onrender.com";
+    const baseUrl = API_URL.replace('/api', '');
     const sessionData = encodeURIComponent(
       JSON.stringify({
         title,
@@ -45,7 +48,7 @@ function CourseCard({
   };
   return (
     <article
-      className="rounded-[10px] border border-[#d4d8e3] bg-white p-2.5 shadow-[0_2px_0_rgba(0,0,0,0.02)] cursor-pointer hover:bg-gray-50"
+      className={`rounded-[10px] border border-[#d4d8e3] bg-white p-2.5 shadow-[0_2px_0_rgba(0,0,0,0.02)] ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}
       onClick={handleAction}
     >
       <div className="h-23 w-full rounded-[9px] bg-[#111825]" />

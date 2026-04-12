@@ -36,9 +36,16 @@ function StudySessionModal({ session, onClose }) {
       const url = `/study-sessions/${session._id}/progress`;
       const response = await api.get(url, token);
       if (response.data?.progress) {
-        setProgress(response.data.progress.progress || 0);
-        setLastPosition(response.data.progress.lastPosition || 0);
-        setCompleted(response.data.progress.completed || false);
+        const rawProgress = response.data.progress;
+        const validProgress = typeof rawProgress.progress === 'number' && !isNaN(rawProgress.progress) ? rawProgress.progress : 0;
+        const validLastPosition = typeof rawProgress.lastPosition === 'number' && !isNaN(rawProgress.lastPosition) ? rawProgress.lastPosition : 0;
+        const validCompleted = rawProgress.completed === true;
+        
+        setProgress(validProgress);
+        setLastPosition(validLastPosition);
+        setCompleted(validCompleted);
+        
+        console.log('Loaded progress:', validProgress, 'lastPosition:', validLastPosition);
       }
     } catch (err) {
       console.error('Failed to load progress:', err.message);
@@ -73,10 +80,15 @@ function StudySessionModal({ session, onClose }) {
 
   const saveProgress = async (prog, pos) => {
     try {
+      const cleanProg = typeof prog === 'number' && !isNaN(prog) ? Math.min(100, Math.max(0, Math.round(prog))) : 0;
+      const cleanPos = typeof pos === 'number' && !isNaN(pos) ? Math.round(pos) : 0;
+      
+      console.log('Saving progress:', cleanProg, 'lastPosition:', cleanPos);
+      
       const token = localStorage.getItem('token');
       await api.post(`/study-sessions/${session._id}/progress`, {
-        progress: prog,
-        lastPosition: pos
+        progress: cleanProg,
+        lastPosition: cleanPos
       }, token);
     } catch (err) {
       console.error('Failed to save progress:', err);

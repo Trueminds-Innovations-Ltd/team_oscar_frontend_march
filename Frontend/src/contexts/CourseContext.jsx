@@ -6,6 +6,7 @@ import {
   useCallback,
 } from "react";
 import api from "../shared/api";
+import LMSContext from "./LMSContext";
 
 const CourseContext = createContext();
 
@@ -18,6 +19,7 @@ export function CourseProvider({ children }) {
   const [studySessions, setStudySessions] = useState([]);
   const [studySessionProgress, setStudySessionProgress] = useState({});
   const [error, setError] = useState(null);
+  const [studySessionsLoading, setStudySessionsLoading] = useState(true);
   const [readingModal, setReadingModal] = useState({
     isOpen: false,
     course: null,
@@ -51,15 +53,23 @@ export function CourseProvider({ children }) {
   }, []);
 
   const loadStudySessions = useCallback(async () => {
+    setStudySessionsLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         console.log("No token found, skipping study sessions load");
+        setStudySessionsLoading(false);
         return;
       }
       console.log("Loading study sessions with token:", token);
 
-      const response = await api.get("/study-sessions/student", token);
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      const isTutor = userData.role === 2;
+      
+      const endpoint = isTutor ? "/study-sessions" : "/study-sessions/student";
+      console.log("Loading study sessions from:", endpoint);
+
+      const response = await api.get(endpoint, token);
       console.log("Study sessions response:", response);
       console.log("Study sessions data:", response.data);
 
@@ -76,7 +86,22 @@ export function CourseProvider({ children }) {
         );
         console.log("Progress response:", progressResponse);
         if (progressResponse.data?.progressMap) {
-          setStudySessionProgress(progressResponse.data.progressMap);
+          const rawMap = progressResponse.data.progressMap;
+          const cleanedMap = {};
+          Object.keys(rawMap).forEach(sessionId => {
+            const p = rawMap[sessionId];
+            if (p && typeof p === 'object') {
+              cleanedMap[sessionId] = {
+                progress: typeof p.progress === 'number' && !isNaN(p.progress) ? p.progress : 0,
+                lastPosition: typeof p.lastPosition === 'number' && !isNaN(p.lastPosition) ? p.lastPosition : 0,
+                completed: p.completed === true,
+                createdAt: p.createdAt,
+                updatedAt: p.updatedAt
+              };
+            }
+          });
+          console.log("Cleaned progress map:", cleanedMap);
+          setStudySessionProgress(cleanedMap);
         }
       } catch (progressErr) {
         console.error(
@@ -89,6 +114,8 @@ export function CourseProvider({ children }) {
         "Failed to load study sessions (non-critical):",
         err.message,
       );
+    } finally {
+      setStudySessionsLoading(false);
     }
   }, []);
 
@@ -160,15 +187,17 @@ export function CourseProvider({ children }) {
     const incomplete = [];
     studySessions.forEach((session) => {
       const progress = studySessionProgress[session._id];
-      if (progress && progress.progress > 0 && progress.progress < 100) {
+      const validProgress = progress && typeof progress.progress === 'number' && !isNaN(progress.progress) ? progress.progress : 0;
+      if (validProgress > 0 && validProgress < 100) {
         incomplete.push({
           session,
           progress: progress.progress,
           lastPosition: progress.lastPosition || 0,
+          updatedAt: progress.updatedAt ? new Date(progress.updatedAt).getTime() : 0,
         });
       }
     });
-    return incomplete.sort((a, b) => b.lastPosition - a.lastPosition);
+    return incomplete.sort((a, b) => b.updatedAt - a.updatedAt);
   }, [studySessions, studySessionProgress]);
 
   const getLatestIncomplete = useCallback(() => {
@@ -314,6 +343,7 @@ export function CourseProvider({ children }) {
     enrolledCourses,
     studySessions,
     studySessionProgress,
+    studySessionsLoading,
     error,
     readingModal,
     studySessionModal,

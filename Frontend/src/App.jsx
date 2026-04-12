@@ -74,6 +74,7 @@ function CoursesPage() {
   return (
     <CourseProvider>
       <Courses />
+      <FloatingAIChat />
     </CourseProvider>
   );
 }
@@ -82,6 +83,7 @@ function ProfilePage() {
   return (
     <CourseProvider>
       <ProfileOverviewPage />
+      <FloatingAIChat />
     </CourseProvider>
   );
 }
@@ -98,12 +100,18 @@ function ActiveCoursesPage() {
   return (
     <CourseProvider>
       <ActiveCourses />
+      <FloatingAIChat />
     </CourseProvider>
   );
 }
 
 function MessagesPageWrapper() {
-  return <MessagesPage />;
+  return (
+    <>
+      <MessagesPage />
+      <FloatingAIChat />
+    </>
+  );
 }
 
 function App() {

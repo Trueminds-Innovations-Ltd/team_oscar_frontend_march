@@ -21,7 +21,7 @@ function getProgramTitle(title) {
 }
 
 function UrgentCourses() {
-  const { studySessions, studySessionProgress, openStudySessionModal } = useCourses();
+  const { studySessions, studySessionProgress, studySessionsLoading, openStudySessionModal } = useCourses();
   const { user } = useContext(LMSContext);
 
   const now = new Date();
@@ -58,6 +58,8 @@ function UrgentCourses() {
     return formatDate(dateString);
   };
 
+  const isUpcoming = (session) => new Date(session.startDate) > now;
+
   return (
     <section className="h-full w-full rounded-lg border border-gray-300 p-4">
       <div className="flex items-center justify-between mb-4">
@@ -70,53 +72,61 @@ function UrgentCourses() {
       </div>
 
       <section className="flex flex-col">
-        {unopenedSessions.length === 0 && (
+        {studySessionsLoading ? (
+          <div className="flex items-center justify-center py-6">
+            <div className="w-5 h-5 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
+            <span className="ml-2 text-sm text-gray-500">Loading...</span>
+          </div>
+        ) : unopenedSessions.length === 0 ? (
           <p className="text-gray-500 text-sm py-4">No upcoming study sessions</p>
+        ) : (
+          <>
+            {unopenedSessions.slice(0, 3).map((session) => {
+              const isActive = new Date(session.startDate) <= now;
+              
+              return (
+                <div 
+                  key={session._id}
+                  className={`flex items-center gap-3 sm:gap-4 py-4 border-b border-gray-200 ${isUpcoming(session) ? 'opacity-50' : 'hover:bg-gray-50 cursor-pointer'} transition-colors -mx-4 px-4`}
+                  onClick={() => !isUpcoming(session) && openStudySessionModal(session)}
+                >
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-blue-900 flex-shrink-0 flex items-center justify-center">
+                    <span className="text-white text-xl">📚</span>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">
+                      {getProgramTitle(session.course?.title)}
+                    </p>
+                    <p className="truncate text-xs text-gray-500">
+                      {session.subTopic} • {session.tutor?.name || 'Tutor'}
+                    </p>
+                  </div>
+
+                  <div className="flex-shrink-0">
+                    <p className={`text-xs font-medium whitespace-nowrap ${isActive ? 'text-green-600' : 'text-blue-900'}`}>
+                      {formatStartDate(session.startDate)}
+                    </p>
+                  </div>
+
+                  <button 
+                    className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-lg transition-colors ${isUpcoming(session) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-900 text-white hover:bg-blue-800'}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!isUpcoming(session)) openStudySessionModal(session);
+                    }}
+                    disabled={isUpcoming(session)}
+                  >
+                    {isUpcoming(session) ? 'Soon' : isActive ? 'Join' : 'Start'}
+                  </button>
+                </div>
+              );
+            })}
+          </>
         )}
-
-        {unopenedSessions.slice(0, 3).map((session) => {
-          const isActive = new Date(session.startDate) <= now;
-          
-          return (
-            <div 
-              key={session._id}
-              className="flex items-center gap-3 sm:gap-4 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors -mx-4 px-4 cursor-pointer"
-              onClick={() => openStudySessionModal(session)}
-            >
-              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-blue-900 flex-shrink-0 flex items-center justify-center">
-                <span className="text-white text-xl">📚</span>
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
-                  {getProgramTitle(session.course?.title)}
-                </p>
-                <p className="truncate text-xs text-gray-500">
-                  {session.subTopic} • {session.tutor?.name || 'Tutor'}
-                </p>
-              </div>
-
-              <div className="flex-shrink-0">
-                <p className={`text-xs font-medium whitespace-nowrap ${isActive ? 'text-green-600' : 'text-blue-900'}`}>
-                  {formatStartDate(session.startDate)}
-                </p>
-              </div>
-
-              <button 
-                className="flex-shrink-0 px-3 py-1.5 bg-blue-900 text-white text-xs rounded-lg hover:bg-blue-800 transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openStudySessionModal(session);
-                }}
-              >
-                {isActive ? 'Join' : 'Start'}
-              </button>
-            </div>
-          );
-        })}
       </section>
 
-      {unopenedSessions.some(s => new Date(s.startDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) && (
+      {!studySessionsLoading && unopenedSessions.some(s => new Date(s.startDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) && (
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-xs text-blue-700 font-medium">
             New sessions available this week!

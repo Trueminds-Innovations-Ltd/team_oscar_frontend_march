@@ -26,7 +26,7 @@ function getProgramTitle(title) {
 
 function CoursesContent({ isTutor }) {
   const { token } = useContext(LMSContext);
-  const { studySessions, studySessionProgress, openStudySessionModal } =
+  const { studySessions, studySessionProgress, studySessionsLoading, openStudySessionModal } =
     useCourses();
 
   const now = new Date();
@@ -42,8 +42,7 @@ function CoursesContent({ isTutor }) {
   const upcomingSessions = studySessions
     .filter((session) => {
       const startDate = new Date(session.startDate);
-      const progress = studySessionProgress[session._id]?.progress || 0;
-      return startDate > now && progress === 0;
+      return startDate > now;
     })
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
@@ -69,14 +68,18 @@ function CoursesContent({ isTutor }) {
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
     if (days > 0) return `${days}d ${hours}h left`;
-    return `${hours}h left`;
+    if (hours > 0) return `${hours}h ${minutes}m left`;
+    if (minutes > 0) return `${minutes}m left`;
+    return "Starting soon";
   };
 
   const getProgress = (session) => {
     const progress = studySessionProgress[session._id];
-    return progress?.progress || 0;
+    const validProgress = typeof progress?.progress === 'number' && !isNaN(progress.progress) ? progress.progress : 0;
+    return Math.min(100, Math.max(0, validProgress));
   };
 
   const getCompletion = (progress) => {
@@ -89,8 +92,13 @@ function CoursesContent({ isTutor }) {
 
   const getLastVisited = (session) => {
     const progress = studySessionProgress[session._id];
-    if (!progress) return null;
+    if (!progress || typeof progress !== 'object') return null;
     return progress.updatedAt || progress.createdAt;
+  };
+
+  const isUpcoming = (session) => {
+    const startDate = new Date(session.startDate);
+    return startDate > now;
   };
 
   return (
@@ -109,7 +117,15 @@ function CoursesContent({ isTutor }) {
 
         <CoursesControlBar />
 
-        <div className="space-y-4">
+        {studySessionsLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center gap-3 text-gray-500">
+              <div className="w-6 h-6 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
+              <span>Loading study sessions...</span>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
           <CourseSection
             title={isTutor ? "Active Sessions" : "Active Sessions"}
           >
@@ -170,7 +186,8 @@ function CoursesContent({ isTutor }) {
                     }
                     progress={isTutor ? 0 : getProgress(session)}
                     timeLeft={formatTimeLeft(session.startDate)}
-                    actionLabel={isTutor ? "View Details" : "Start Course"}
+                    actionLabel={isTutor ? "View Details" : "Starts Soon"}
+                    disabled={!isTutor && isUpcoming(session)}
                     subTopic={session.subTopic}
                     tutorName={isTutor ? null : session.tutor?.name}
                     isTutor={isTutor}
@@ -178,7 +195,7 @@ function CoursesContent({ isTutor }) {
                     linkUrl={session.linkUrl}
                     sessionId={session._id}
                     onCardClick={
-                      !isTutor ? () => openStudySessionModal(session) : null
+                      !isTutor && !isUpcoming(session) ? () => openStudySessionModal(session) : null
                     }
                     lastVisited={getLastVisited(session)}
                   />
@@ -241,6 +258,7 @@ function CoursesContent({ isTutor }) {
             </CourseSection>
           )}
         </div>
+        )}
       </div>
     </main>
   );
