@@ -17,7 +17,7 @@ function EmailVerifiedSuccess() {
     const confirmEmail = async () => {
       if (!token) {
         setStatus("error");
-        setErrorMessage("No verification token found");
+        setErrorMessage("No verification process found");
         return;
       }
 
