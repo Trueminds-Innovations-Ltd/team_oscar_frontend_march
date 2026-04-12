@@ -11,19 +11,16 @@ function EmailVerification() {
   return (
     <div className="w-[55%] h-screen overflow-y-auto px-6 py-12 md:px-10 lg:px-20 xl:px-24 flex flex-col items-center max-[700px]:w-full">
       <div className="w-full max-w-120 flex flex-col items-center text-center">
-        {/* 1. Logo */}
         <div className="mb-12">
           <Logo />
         </div>
 
-        {/* 2. Illustration (The Circle Mail Icon) */}
         <div className="relative mb-8">
           <div className="w-32 h-32 bg-[#4D63A3] rounded-full flex items-center justify-center shadow-lg">
             <Mail size={60} color="white" strokeWidth={1.5} />
           </div>
         </div>
 
-        {/* 3. Text Header */}
         <h1 className="text-4xl text-[#1D3573] font-extrabold tracking-tight mb-3">
           Check your email
         </h1>
@@ -32,7 +29,6 @@ function EmailVerification() {
           <span className="text-[#1D3573] font-bold">Jo*****@gmail.com</span>
         </p>
 
-        {/* 4. Main Action Button */}
         <Button
           type="button"
           className="w-full font-bold text-[16px] py-4 rounded-2xl bg-[#1D3573] hover:bg-[#162a5c] transition-all shadow-md flex items-center justify-center gap-3"
@@ -42,7 +38,6 @@ function EmailVerification() {
           Open Email App
         </Button>
 
-        {/* 5. Secondary Buttons Row */}
         <div className="flex gap-4 w-full mt-6">
           <Button
             className="flex-1 font-bold py-3.5 rounded-2xl border-gray-300 bg-white hover:bg-gray-50 transition-all"
@@ -67,13 +62,11 @@ function EmailVerification() {
           </Button>
         </div>
 
-        {/* 6. Expiry Footer */}
         <p className="text-gray-500 font-semibold mt-8 text-sm">
           This link will expire in{" "}
           <span className="text-gray-700">10 minutes</span>
         </p>
 
-        {/* 7. Bottom Navigation (Matching your other screens) */}
         <TextBox
           className="text-center text-[15px] leading-4 mt-16 pb-12 font-bold"
           textColor="text-gray-900"
