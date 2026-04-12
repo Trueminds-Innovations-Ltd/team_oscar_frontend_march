@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
-import { IoClose } from 'react-icons/io5';
-import api from '../../../shared/api';
-import LMSContext from '../../../contexts/LMSContext';
+import { useState, useEffect, useContext } from "react";
+import { IoClose } from "react-icons/io5";
+import api from "../../../shared/api";
+import LMSContext from "../../../contexts/LMSContext";
 
 const courseTitleToProgram = {
   "Modern React Development": "Frontend",
@@ -20,10 +20,10 @@ const courseTitleToProgram = {
   "Data Analysis": "Data Analysis",
   "Product Management": "Product",
   "Cloud Engineering": "Cloud",
-  "Networking": "Networking",
+  Networking: "Networking",
   "Cyber Security": "Cyber Security",
-  "Design": "UI/UX",
-  "Development": "Frontend"
+  Design: "UI/UX",
+  Development: "Frontend",
 };
 
 const programNameMapping = {
@@ -33,30 +33,59 @@ const programNameMapping = {
   "Data Analysis": "Data Analysis",
   "Product Management": "Product",
   "Cloud Engineering": "Cloud",
-  "Networking": "Networking",
-  "Cyber Security": "Cyber Security"
+  Networking: "Networking",
+  "Cyber Security": "Cyber Security",
 };
 
 const programSubTopics = {
-  "Frontend": ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
-  "UI/UX": ["Wireframing", "Prototyping", "User Research", "Figma", "Design Systems"],
-  "Backend": ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
-  "Data Analysis": ["Python", "SQL", "Excel", "Data Visualization", "Statistics"],
-  "Product": ["Product Roadmaps", "OKRs", "User Interviews", "Go-to-Market", "Agile/Scrum"],
-  "Cloud": ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
-  "Networking": ["CCNA", "Network Security", "Routing & Switching", "Firewalls", "VoIP"],
-  "Cyber Security": ["Penetration Testing", "Ethical Hacking", "Security+", "CISSP"]
+  Frontend: ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
+  "UI/UX": [
+    "Wireframing",
+    "Prototyping",
+    "User Research",
+    "Figma",
+    "Design Systems",
+  ],
+  Backend: ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
+  "Data Analysis": [
+    "Python",
+    "SQL",
+    "Excel",
+    "Data Visualization",
+    "Statistics",
+  ],
+  Product: [
+    "Product Roadmaps",
+    "OKRs",
+    "User Interviews",
+    "Go-to-Market",
+    "Agile/Scrum",
+  ],
+  Cloud: ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
+  Networking: [
+    "CCNA",
+    "Network Security",
+    "Routing & Switching",
+    "Firewalls",
+    "VoIP",
+  ],
+  "Cyber Security": [
+    "Penetration Testing",
+    "Ethical Hacking",
+    "Security+",
+    "CISSP",
+  ],
 };
 
 const programLabels = {
-  "Frontend": "Frontend Development",
+  Frontend: "Frontend Development",
   "UI/UX": "UI/UX Design",
-  "Backend": "Backend Development",
+  Backend: "Backend Development",
   "Data Analysis": "Data Analysis",
-  "Product": "Product Management",
-  "Cloud": "Cloud Engineering",
-  "Networking": "Networking",
-  "Cyber Security": "Cyber Security"
+  Product: "Product Management",
+  Cloud: "Cloud Engineering",
+  Networking: "Networking",
+  "Cyber Security": "Cyber Security",
 };
 
 function CreateStudySession({ isOpen, onClose, onSuccess }) {
@@ -64,26 +93,29 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
-    course: '',
-    subTopic: '',
-    fileUrl: '',
-    linkUrl: '',
-    startDate: '',
-    uploading: false
+    course: "",
+    subTopic: "",
+    fileUrl: "",
+    linkUrl: "",
+    startDate: "",
+    uploading: false,
   });
-  
-  const [error, setError] = useState('');
+
+  const [error, setError] = useState("");
 
   const tutorInterests = user?.interests || [];
   const tutorSubTopics = user?.subTopics || [];
 
-  const tutorPrograms = tutorInterests.map(interest => {
-    if (courseTitleToProgram[interest]) return courseTitleToProgram[interest];
-    if (Object.values(courseTitleToProgram).includes(interest)) return interest;
-    return null;
-  }).filter(Boolean);
+  const tutorPrograms = tutorInterests
+    .map((interest) => {
+      if (courseTitleToProgram[interest]) return courseTitleToProgram[interest];
+      if (Object.values(courseTitleToProgram).includes(interest))
+        return interest;
+      return null;
+    })
+    .filter(Boolean);
 
   useEffect(() => {
     if (isOpen && token) {
@@ -96,21 +128,71 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
     try {
       const tutorInterestsList = user?.interests || [];
       const tutorSubTopicsList = user?.subTopics || [];
-      
-      console.log('Tutor interests:', tutorInterestsList);
-      console.log('Tutor subTopics:', tutorSubTopicsList);
-      
+
+      console.log("Tutor interests:", tutorInterestsList);
+      console.log("Tutor subTopics:", tutorSubTopicsList);
+
       const programSubTopicsMap = {
-        "Frontend": ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
-        "UI/UX": ["Wireframing", "Prototyping", "User Research", "Figma", "Design Systems"],
-        "Backend": ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
-        "Data Analysis": ["Python", "SQL", "Excel", "Data Visualization", "Statistics"],
-        "Product": ["Product Roadmaps", "OKRs", "User Interviews", "Go-to-Market", "Agile/Scrum"],
-        "Cloud": ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
-        "Networking": ["CCNA", "Network Security", "Routing & Switching", "Firewalls", "VoIP"],
-        "Cyber Security": ["Penetration Testing", "Ethical Hacking", "Security+", "CISSP"]
+        Frontend: [
+          "React",
+          "JavaScript",
+          "TypeScript",
+          "CSS",
+          "Vue.js",
+          "Next.js",
+        ],
+        "UI/UX": [
+          "Wireframing",
+          "Prototyping",
+          "User Research",
+          "Figma",
+          "Design Systems",
+        ],
+        Backend: [
+          "Node.js",
+          "Python",
+          "Java",
+          "Go",
+          "Express.js",
+          "Database Design",
+        ],
+        "Data Analysis": [
+          "Python",
+          "SQL",
+          "Excel",
+          "Data Visualization",
+          "Statistics",
+        ],
+        Product: [
+          "Product Roadmaps",
+          "OKRs",
+          "User Interviews",
+          "Go-to-Market",
+          "Agile/Scrum",
+        ],
+        Cloud: [
+          "AWS",
+          "Azure",
+          "Google Cloud",
+          "Docker",
+          "Kubernetes",
+          "DevOps",
+        ],
+        Networking: [
+          "CCNA",
+          "Network Security",
+          "Routing & Switching",
+          "Firewalls",
+          "VoIP",
+        ],
+        "Cyber Security": [
+          "Penetration Testing",
+          "Ethical Hacking",
+          "Security+",
+          "CISSP",
+        ],
       };
-      
+
       const courseTitleToProgram = {
         "Frontend Development": "Frontend",
         "UI/UX Design": "UI/UX",
@@ -118,159 +200,222 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
         "Data Analysis": "Data Analysis",
         "Product Management": "Product",
         "Cloud Engineering": "Cloud",
-        "Networking": "Networking",
-        "Cyber Security": "Cyber Security"
+        Networking: "Networking",
+        "Cyber Security": "Cyber Security",
       };
-      
-      const programsToShow = tutorInterestsList.map(interest => {
-        return courseTitleToProgram[interest] || interest;
-      }).filter(Boolean);
-      
-      console.log('Programs to show:', programsToShow);
-      
-      const coursesData = programsToShow.map(program => ({
+
+      const programsToShow = tutorInterestsList
+        .map((interest) => {
+          return courseTitleToProgram[interest] || interest;
+        })
+        .filter(Boolean);
+
+      console.log("Programs to show:", programsToShow);
+
+      const coursesData = programsToShow.map((program) => ({
         _id: program,
         title: program,
         subTopics: programSubTopicsMap[program] || [],
-        isProgram: true
+        isProgram: true,
       }));
-      
-      console.log('Courses data:', coursesData);
+
+      console.log("Courses data:", coursesData);
       setCourses(coursesData);
     } catch (err) {
-      console.error('Failed to process courses:', err);
+      console.error("Failed to process courses:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const selectedCourse = courses.find(c => c._id === formData.course);
-  
+  const selectedCourse = courses.find((c) => c._id === formData.course);
+
   const getProgramForCourse = (courseTitle) => {
     return courseTitleToProgram[courseTitle] || courseTitle;
   };
-  
-  const selectedProgram = selectedCourse ? getProgramForCourse(selectedCourse.title) : null;
-  
+
+  const selectedProgram = selectedCourse
+    ? getProgramForCourse(selectedCourse.title)
+    : null;
+
   const getSubTopicsForProgram = (program) => {
     const map = {
-      "Frontend": ["React", "JavaScript", "TypeScript", "CSS", "Vue.js", "Next.js"],
-      "UI/UX": ["Wireframing", "Prototyping", "User Research", "Figma", "Design Systems"],
-      "Backend": ["Node.js", "Python", "Java", "Go", "Express.js", "Database Design"],
-      "Data Analysis": ["Python", "SQL", "Excel", "Data Visualization", "Statistics"],
-      "Product": ["Product Roadmaps", "OKRs", "User Interviews", "Go-to-Market", "Agile/Scrum"],
-      "Cloud": ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
-      "Networking": ["CCNA", "Network Security", "Routing & Switching", "Firewalls", "VoIP"],
-      "Cyber Security": ["Penetration Testing", "Ethical Hacking", "Security+", "CISSP"]
+      Frontend: [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "CSS",
+        "Vue.js",
+        "Next.js",
+      ],
+      "UI/UX": [
+        "Wireframing",
+        "Prototyping",
+        "User Research",
+        "Figma",
+        "Design Systems",
+      ],
+      Backend: [
+        "Node.js",
+        "Python",
+        "Java",
+        "Go",
+        "Express.js",
+        "Database Design",
+      ],
+      "Data Analysis": [
+        "Python",
+        "SQL",
+        "Excel",
+        "Data Visualization",
+        "Statistics",
+      ],
+      Product: [
+        "Product Roadmaps",
+        "OKRs",
+        "User Interviews",
+        "Go-to-Market",
+        "Agile/Scrum",
+      ],
+      Cloud: ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "DevOps"],
+      Networking: [
+        "CCNA",
+        "Network Security",
+        "Routing & Switching",
+        "Firewalls",
+        "VoIP",
+      ],
+      "Cyber Security": [
+        "Penetration Testing",
+        "Ethical Hacking",
+        "Security+",
+        "CISSP",
+      ],
     };
     return map[program] || [];
   };
-  
+
   // Get sub-topics the tutor is enrolled in for this program
-  const enrolledSubTopicsForProgram = tutorSubTopics.filter(st => {
+  const enrolledSubTopicsForProgram = tutorSubTopics.filter((st) => {
     const allProgramSubTopics = getSubTopicsForProgram(selectedProgram);
     return allProgramSubTopics.includes(st);
   });
-  
+
   // Show only enrolled sub-topics if available, otherwise show all for the program
-  const availableSubTopics = enrolledSubTopicsForProgram.length > 0 
-    ? enrolledSubTopicsForProgram 
-    : (selectedProgram ? getSubTopicsForProgram(selectedProgram) : tutorSubTopics);
+  const availableSubTopics =
+    enrolledSubTopicsForProgram.length > 0
+      ? enrolledSubTopicsForProgram
+      : selectedProgram
+        ? getSubTopicsForProgram(selectedProgram)
+        : tutorSubTopics;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
-    if (name === 'course') {
-      setFormData(prev => ({ ...prev, subTopic: '' }));
+
+    if (name === "course") {
+      setFormData((prev) => ({ ...prev, subTopic: "" }));
     }
-    setError('');
+    setError("");
   };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const validTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
       if (!validTypes.includes(file.type)) {
-        setError('Please upload a PDF or DOCX file');
+        setError("Please upload a PDF or DOCX file");
         return;
       }
-      
-      setFormData(prev => ({ ...prev, fileUrl: file.name, uploading: true }));
-      
+
+      setFormData((prev) => ({ ...prev, fileUrl: file.name, uploading: true }));
+
       try {
         const formDataUpload = new FormData();
-        formDataUpload.append('file', file);
-        
-        const response = await fetch('http://localhost:3000/api/upload', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
+        formDataUpload.append("file", file);
+
+        const response = await fetch(
+          "https://team-oscar-backend-march-8and.onrender.com/api/upload",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formDataUpload,
           },
-          body: formDataUpload
-        });
-        
+        );
+
         const result = await response.json();
-        
+
         if (result.success) {
-          setFormData(prev => ({ ...prev, fileUrl: result.fileUrl, uploading: false }));
+          setFormData((prev) => ({
+            ...prev,
+            fileUrl: result.fileUrl,
+            uploading: false,
+          }));
         } else {
-          setError('Failed to upload file');
-          setFormData(prev => ({ ...prev, fileUrl: '', uploading: false }));
+          setError("Failed to upload file");
+          setFormData((prev) => ({ ...prev, fileUrl: "", uploading: false }));
         }
       } catch (err) {
-        setError('Failed to upload file');
-        setFormData(prev => ({ ...prev, fileUrl: '', uploading: false }));
+        setError("Failed to upload file");
+        setFormData((prev) => ({ ...prev, fileUrl: "", uploading: false }));
       }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!formData.course || !formData.subTopic || !formData.startDate) {
-      setError('Please fill in all required fields');
+      setError("Please fill in all required fields");
       return;
     }
 
     if (!formData.fileUrl && !formData.linkUrl) {
-      setError('Please provide either a file or a link');
+      setError("Please provide either a file or a link");
       return;
     }
 
     setSubmitting(true);
     try {
-      const selectedProgram = courses.find(c => c._id === formData.course);
-      const programTitle = selectedProgram ? (programLabels[selectedProgram.title] || selectedProgram.title) : '';
-      
+      const selectedProgram = courses.find((c) => c._id === formData.course);
+      const programTitle = selectedProgram
+        ? programLabels[selectedProgram.title] || selectedProgram.title
+        : "";
+
       const payload = {
         course: formData.course,
         courseName: programTitle,
         subTopic: formData.subTopic,
         fileUrl: formData.fileUrl,
         linkUrl: formData.linkUrl,
-        startDate: formData.startDate
+        startDate: formData.startDate,
       };
 
-      await api.post('/study-sessions', payload, token);
-      
+      await api.post("/study-sessions", payload, token);
+
       setFormData({
-        course: '',
-        subTopic: '',
-        fileUrl: '',
-        linkUrl: '',
-        startDate: '',
-        uploading: false
+        course: "",
+        subTopic: "",
+        fileUrl: "",
+        linkUrl: "",
+        startDate: "",
+        uploading: false,
       });
-      
+
       if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
-      setError(err.message || 'Failed to create study session');
+      setError(err.message || "Failed to create study session");
     } finally {
       setSubmitting(false);
     }
@@ -282,7 +427,9 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
       <div className="relative w-full max-w-lg rounded-xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">Create Study Session</h2>
+          <h2 className="text-lg font-bold text-gray-900">
+            Create Study Session
+          </h2>
           <button
             onClick={onClose}
             className="flex-shrink-0 rounded-full p-2 hover:bg-gray-100 transition-colors"
@@ -310,7 +457,7 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
               disabled={loading}
             >
               <option value="">Choose a program...</option>
-              {courses.map(course => (
+              {courses.map((course) => (
                 <option key={course._id} value={course._id}>
                   {programLabels[course.title] || course.title}
                 </option>
@@ -318,7 +465,8 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
             </select>
             {courses.length === 0 && !loading && (
               <p className="mt-1 text-sm text-gray-500">
-                You are not enrolled in any programs. Please enroll in a program first to create study sessions.
+                You are not enrolled in any programs. Please enroll in a program
+                first to create study sessions.
               </p>
             )}
           </div>
@@ -335,7 +483,7 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
               disabled={!formData.course}
             >
               <option value="">Choose a sub-topic...</option>
-              {availableSubTopics.map(subTopic => (
+              {availableSubTopics.map((subTopic) => (
                 <option key={subTopic} value={subTopic}>
                   {subTopic}
                 </option>
@@ -394,7 +542,7 @@ function CreateStudySession({ isOpen, onClose, onSuccess }) {
             disabled={submitting}
             className="w-full rounded-lg bg-blue-900 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-50"
           >
-            {submitting ? 'Creating...' : 'Create Study Session'}
+            {submitting ? "Creating..." : "Create Study Session"}
           </button>
         </form>
       </div>
